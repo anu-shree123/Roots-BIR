@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Map · Roots Bir</title>
+  <meta name="description" content="An illustrated map of Bir: where Roots Bir is, and the quiet places nearby.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="map.css">
+</head>
+<body class="map-page">
+
+  <header class="top">
+    <div class="top-inner">
+      <a href="index.html" class="name"><img class="mark" src="images/logo-mark.png" alt="" width="34" height="34"><span>Roots Bir</span></a>
+      <nav class="nav" aria-label="Main">
+        <a href="index.html#home">The home</a>
+        <a href="index.html#around">Around Bir</a>
+        <a href="index.html#photos">Photos</a>
+        <a href="map.html" aria-current="page">Map</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+      <a href="index.html#book" class="btn btn-solid btn-sm">Book</a>
+    </div>
+  </header>
+
+  <main>
+  <section class="snap map-section" id="map" data-label-nav="Map">
+  <div class="map-stage">
+    <!-- The illustrated map fills the screen -->
+    <div class="map-canvas">
+      <svg viewBox="-440 -20 1440 840" data-vb-wide="-440 -20 1440 840" data-vb-narrow="190 96 720 600" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="map-t">
+        <title id="map-t">Illustrated map of Bir showing Roots Bir and nearby places</title>
+        <defs>
+          <pattern id="tea" width="14" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
+            <path d="M0 5 Q3.5 2 7 5 T14 5" fill="none" stroke="#8f9c88" stroke-width="1.1" opacity=".7"/>
+          </pattern>
+          <pattern id="field" width="8" height="8" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r=".9" fill="#a99f8c" opacity=".55"/>
+          </pattern>
+        </defs>
+
+        <rect x="-500" y="-40" width="1560" height="900" fill="#efece4"/>
+
+        <!-- Dhauladhar: snowy ridge across the north -->
+        <g class="ridge-n">
+          <path d="M-500 120 L-430 70 L-360 104 L-280 48 L-210 90 L-140 44 L-70 98 L0 150 L70 96 L120 118 L190 58 L240 92 L300 40 L360 86 L430 34 L500 80 L560 30 L630 74 L700 26 L770 70 L840 38 L910 84 L1000 52 L1060 70 L1060 -40 L-500 -40 Z" fill="#dfe2da"/>
+          <path d="M160 82 L190 58 L214 76 M270 62 L300 40 L326 62 M400 56 L430 34 L458 56 M530 52 L560 30 L590 52 M670 48 L700 26 L732 50 M815 56 L840 38 L866 58" fill="none" stroke="#fbfaf7" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M-500 120 L-430 70 L-360 104 L-280 48 L-210 90 L-140 44 L-70 98 L0 150 L70 96 L120 118 L190 58 L240 92 L300 40 L360 86 L430 34 L500 80 L560 30 L630 74 L700 26 L770 70 L840 38 L910 84 L1000 52 L1060 70" fill="none" stroke="#6d7b68" stroke-width="1.3" stroke-linejoin="round"/>
+          <text x="500" y="128" class="m-region">The Dhauladhar range</text>
+        </g>
+
+        <!-- contour lines -->
+        <g fill="none" stroke="#c9c3b6" stroke-width="1" opacity=".8">
+          <path d="M-500 214 C-380 204 -200 226 0 210 C120 190 220 230 340 206 C470 180 560 214 690 196 C820 178 900 206 1000 190"/>
+          <path d="M-500 266 C-360 256 -180 276 0 262 C140 246 240 280 380 258 C500 240 620 268 740 250 C860 232 930 258 1000 248"/>
+          <path d="M-500 334 C-340 322 -160 344 0 330 C160 316 280 346 420 324 C560 304 660 336 800 318 C900 306 950 324 1000 318"/>
+          <path d="M-500 612 C-320 600 -160 624 0 610 C180 596 300 626 460 606 C620 588 760 620 1000 600" opacity=".6"/>
+        </g>
+
+        <!-- stream coming down from the hills -->
+        <path d="M640 110 C620 180 660 230 610 290 C560 350 590 400 545 450 C505 495 470 560 430 700" fill="none" stroke="#a9b8bd" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+
+        <!-- tea gardens -->
+        <path d="M640 520 C700 498 790 506 850 540 C880 580 850 640 780 650 C710 660 650 630 630 590 C620 560 620 532 640 520 Z" fill="url(#tea)" stroke="#8f9c88" stroke-width="1" opacity=".9"/>
+        <path d="M120 480 C170 466 230 476 250 510 C262 540 230 570 180 566 C130 562 104 530 120 480 Z" fill="url(#tea)" stroke="#8f9c88" stroke-width="1" opacity=".7"/>
+
+        <!-- landing field -->
+        <path d="M430 520 C470 506 540 510 560 536 C576 560 548 590 500 592 C454 594 418 572 430 520 Z" fill="url(#field)" stroke="#b9ae98" stroke-width="1"/>
+
+        <!-- roads -->
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path class="road" d="M-500 700 C-300 690 -120 660 0 640 C120 620 220 560 330 470 C380 430 420 410 470 420 C540 434 580 470 640 470 C720 470 800 440 1000 430"/>
+          <path class="road" d="M470 420 C500 380 560 380 590 350 C640 300 560 280 610 240 C660 200 720 230 740 190 C756 160 760 150 770 140"/>
+          <path class="lane" d="M330 470 C340 430 360 410 382 398"/>
+          <path class="lane" d="M330 470 C300 420 270 360 252 300"/>
+          <path class="lane" d="M470 420 C480 470 492 500 498 530"/>
+        </g>
+
+        <!-- off-map pointer -->
+        <g class="m-off">
+          <path d="M150 620 L108 632 M108 632 L120 620 M108 632 L122 640" fill="none" stroke="#6f6a62" stroke-width="1.2" stroke-linecap="round"/>
+          <text x="130" y="664">to Baijnath &amp; Ahju station</text>
+        </g>
+
+        <!-- compass -->
+        <g transform="translate(930 580)" class="m-compass">
+          <circle r="26" fill="none" stroke="#b9b2a4"/>
+          <path d="M0 -20 L6 4 L0 0 L-6 4 Z" fill="#6d7b68"/>
+          <text y="-32" text-anchor="middle">N</text>
+        </g>
+
+        <!-- pins (positions match the list) -->
+        <g class="pins">
+          <g class="pin pin-home" data-place="1" transform="translate(382 398)" tabindex="0" role="button" aria-label="1, Roots Bir">
+            <circle r="26" class="halo"/>
+            <circle r="15" class="dot"/>
+            <path d="M0 -8 C4 -4 7 -1 5 3 C3 6 1 5 0 8 C-1 5 -3 6 -5 3 C-7 -1 -4 -4 0 -8 Z" fill="#fbfaf7"/>
+            <text class="m-label" x="24" y="38">Roots Bir</text>
+          </g>
+          <g class="pin" data-place="2" transform="translate(452 352)" tabindex="0" role="button" aria-label="2, Deer Park Institute">
+            <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">2</text>
+            <text class="m-label" x="18" y="-14">Deer Park</text>
+          </g>
+          <g class="pin" data-place="3" transform="translate(612 466)" tabindex="0" role="button" aria-label="3, Tibetan Colony">
+            <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">3</text>
+            <text class="m-label" x="18" y="-14">Tibetan Colony</text>
+          </g>
+          <g class="pin" data-place="4" transform="translate(498 552)" tabindex="0" role="button" aria-label="4, Landing site">
+            <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">4</text>
+            <text class="m-label" x="18" y="30">Landing site</text>
+          </g>
+          <g class="pin" data-place="5" transform="translate(746 580)" tabindex="0" role="button" aria-label="5, Tea gardens">
+            <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">5</text>
+            <text class="m-label" x="18" y="30">Tea gardens</text>
+          </g>
+          <g class="pin" data-place="6" transform="translate(252 300)" tabindex="0" role="button" aria-label="6, Gunehar village">
+            <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">6</text>
+            <text class="m-label" x="18" y="-14">Gunehar</text>
+          </g>
+          <g class="pin" data-place="7" transform="translate(770 140)" tabindex="0" role="button" aria-label="7, Billing take-off">
+            <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">7</text>
+            <text class="m-label" x="20" y="6">Billing take-off</text>
+          </g>
+        </g>
+      </svg>
+      <p class="map-note">Illustrated map, not to scale</p>
+    </div>
+
+    <!-- Two offset paper panels with the place list -->
+    <aside class="map-panel">
+      <div class="panel-back" aria-hidden="true"></div>
+      <div class="panel-front">
+        <p class="eyebrow">Where we are</p>
+        <h1>Bir, <em>on foot and slowly</em></h1>
+        <p class="panel-lede">A village near Bir Billing in Kangra, Himachal Pradesh. Tap a place to find it on the map. <span class="lede-note">(The map is illustrated, not to scale.)</span></p>
+        <ol class="places">
+          <li data-place="1" class="is-home">
+            <button type="button"><span class="n">1</span><span class="t">Roots Bir</span><span class="d">home</span></button>
+            <p>Our home, with a garden and a balcony that faces the mountains.</p>
+          </li>
+          <li data-place="2">
+            <button type="button"><span class="n">2</span><span class="t">Deer Park Institute</span><span class="d">10 min walk</span></button>
+            <p>A quiet centre for study and meditation, an easy walk from the house.</p>
+          </li>
+          <li data-place="3">
+            <button type="button"><span class="n">3</span><span class="t">Tibetan Colony</span></button>
+            <p>Chokling Gompa, small cafés and the heart of Bir's Tibetan community.</p>
+          </li>
+          <li data-place="4">
+            <button type="button"><span class="n">4</span><span class="t">Landing site</span></button>
+            <p>Where the paragliders come down. Lovely at sunset, even if you don't fly.</p>
+          </li>
+          <li data-place="5">
+            <button type="button"><span class="n">5</span><span class="t">Tea gardens</span></button>
+            <p>The Bir tea estates, for a slow walk between the rows.</p>
+          </li>
+          <li data-place="6">
+            <button type="button"><span class="n">6</span><span class="t">Gunehar</span></button>
+            <p>An old village of slate-roofed houses and quiet lanes.</p>
+          </li>
+          <li data-place="7">
+            <button type="button"><span class="n">7</span><span class="t">Billing take-off</span><span class="d">about 14 km</span></button>
+            <p>The paragliding take-off, high up the hill road.</p>
+          </li>
+        </ol>
+        <div class="panel-foot">
+          <a class="link" href="https://maps.google.com/?q=Bir,+Himachal+Pradesh" target="_blank" rel="noopener">Open in Google Maps</a>
+          <a class="link link-quiet" href="index.html">Back to the home</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+  </section>
+
+  <section class="block snap tone-stone" id="getting-here" data-label-nav="Getting here">
+    <div class="wrap two-col">
+      <div>
+        <h2 class="section-title">Getting <em>here</em></h2>
+        <p class="muted">A peaceful village near Bir Billing, Kangra district, Himachal Pradesh. Call or WhatsApp <a href="https://wa.me/919311710013" target="_blank" rel="noopener">+91 93117 10013</a> and we'll help with directions.</p>
+        <a class="link" href="https://maps.google.com/?q=Bir,+Himachal+Pradesh" target="_blank" rel="noopener">Open in Google Maps</a><br>
+        <a class="link link-quiet" href="index.html">Back to the home</a>
+      </div>
+      <dl class="list compact">
+        <div><dt>Deer Park Institute</dt><dd>10 min walk</dd></div>
+        <div><dt>Billing take-off</dt><dd>about 14 km</dd></div>
+        <div><dt>Baijnath / Ahju (rail &amp; bus)</dt><dd>about 15–30 min</dd></div>
+        <div><dt>Kangra (Gaggal) airport</dt><dd>about 2 hrs</dd></div>
+        <div><dt>Delhi (overnight bus)</dt><dd>about 10–12 hrs</dd></div>
+      </dl>
+    </div>
+  </section>
+  </main>
+
+
+  <script src="main.js"></script>
+</body>
+</html>
