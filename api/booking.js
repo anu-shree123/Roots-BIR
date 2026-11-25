@@ -1,7 +1,7 @@
 // Same-origin relay to the Apps Script backend, so the browser only ever
 // talks to rootsbir.com. Avoids CORS and browser "local network" blocks on
 // Google's script.googleusercontent.com redirect.
-const BACKEND = 'https://script.google.com/macros/s/AKfycbytGkZFkrvusOXvCygp6C2uTux7pvOosbVQyiH1bqrhBXPqmNsGgUV2lfGSPvfZUoat0A/exec';
+const backendUrl = require('./_backend');
 
 function readBody(req) {
   if (typeof req.body === 'string') return Promise.resolve(req.body);
@@ -14,6 +14,11 @@ function readBody(req) {
 }
 
 module.exports = async (req, res) => {
+  const BACKEND = backendUrl();
+  if (!BACKEND) {
+    res.status(503).json({ ok: false, error: 'Booking is not set up on this preview yet (BOOKING_BACKEND is missing).' });
+    return;
+  }
   res.setHeader('Cache-Control', 'no-store');
   try {
     let r;

@@ -15,6 +15,10 @@
 
 // ====== 1. YOUR SETTINGS (edit these) ===========================
 const CONFIG = {
+  // 'live' in the real sheet's script. 'dev' in the test copy: every email then
+  // goes to you only, marked [DEV], and never to the guest.
+  ENVIRONMENT: 'live',
+
   PROPERTY_NAME: 'Roots Bir',
   OWNER_EMAIL: '',            // leave '' to use the Gmail this script runs as
   OWNER_PHONE: '+91 93117 10013', // shown in the guest's email
@@ -194,10 +198,18 @@ function createBooking_(d) {
 
 function sendEmails_(b) {
   const owner = CONFIG.OWNER_EMAIL || Session.getEffectiveUser().getEmail();
+  const dev = CONFIG.ENVIRONMENT === 'dev';
+  const send = mail => {
+    if (dev) {
+      mail.subject = '[DEV] ' + mail.subject + (mail.to !== owner ? ' (would go to ' + mail.to + ')' : '');
+      mail.to = owner;
+    }
+    MailApp.sendEmail(mail);
+  };
   const when = pretty_(b.checkin) + ' to ' + pretty_(b.checkout) + ' (' + b.n + ' night' + (b.n > 1 ? 's' : '') + ')';
   const amt = b.amount ? '₹' + b.amount.toLocaleString('en-IN') : 'to be confirmed';
 
-  MailApp.sendEmail({
+  send({
     to: owner,
     subject: 'New website booking ' + b.ref + ' - ' + b.name + ' - ' + pretty_(b.checkin),
     body: 'New booking request from your website.\n\n' +
@@ -211,7 +223,7 @@ function sendEmails_(b) {
   });
 
   if (b.email) {
-    MailApp.sendEmail({
+    send({
       to: b.email,
       name: CONFIG.PROPERTY_NAME,
       replyTo: owner,
