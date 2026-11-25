@@ -678,16 +678,19 @@ const OWNER_HTML_ = `<!doctype html>
   #toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 16px; border-radius:8px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; max-width:90%; }
   #toast.on { opacity:1; }
   .hint { font-size:13px; color:var(--muted); margin:8px 0 0; }
+  .warn { font-size:13px; color:#9a3b1c; margin:10px 0 0; }
+  .warn[hidden] { display:none; }
 </style></head>
 <body>
 <header><h1 id="title">Prices</h1><p class="sub">Tap a date, or two dates for a range, then set the price. Guests see the usual price struck through when yours is lower.</p></header>
 
 <div class="card">
   <div class="rates">
-    <label><span>Usual price / night</span><input id="regular" type="number" inputmode="numeric" min="0" placeholder="3500"></label>
-    <label><span>Fri &amp; Sat nights</span><input id="weekend" type="number" inputmode="numeric" min="0" placeholder="same"></label>
+    <label><span>Usual price / night</span><input id="regular" type="number" inputmode="numeric" min="0" placeholder="Not set"></label>
+    <label><span>Fri &amp; Sat nights</span><input id="weekend" type="number" inputmode="numeric" min="0" placeholder="Same as usual"></label>
   </div>
   <div class="row"><button class="primary" id="saveRates">Save usual prices</button></div>
+  <p class="warn" id="noRate" hidden>No usual price saved yet. Type it above and tap Save.</p>
 </div>
 
 <div class="card">
@@ -698,7 +701,7 @@ const OWNER_HTML_ = `<!doctype html>
 
 <div class="card" id="panel" hidden>
   <h2 id="ptitle"></h2>
-  <label><span>Price per night</span><input id="price" type="number" inputmode="numeric" min="0" placeholder="e.g. 2999"></label>
+  <label><span>Price per night</span><input id="price" type="number" inputmode="numeric" min="0" placeholder="Type a price"></label>
   <label style="display:block;margin-top:10px"><span>Note (only you see it)</span><input id="note" maxlength="80" placeholder="e.g. Diwali, last-minute deal"></label>
   <div class="row"><button class="primary" id="setPrice">Set price</button><button class="ghost" id="reset">Back to usual</button></div>
   <div class="row"><button class="ghost" id="clear">Cancel</button></div>
@@ -733,6 +736,7 @@ const OWNER_HTML_ = `<!doctype html>
     if (S.dev) { var b = document.createElement('span'); b.className = 'dev'; b.textContent = 'DEV'; document.getElementById('title').appendChild(b); }
     document.getElementById('regular').value = S.regular || '';
     document.getElementById('weekend').value = S.weekend || '';
+    document.getElementById('noRate').hidden = S.regular > 0;
     if (!view) { var t = parse(S.today); view = new Date(t.getFullYear(), t.getMonth(), 1); }
     draw();
   }
