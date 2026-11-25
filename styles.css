@@ -444,3 +444,12 @@ html { scroll-padding-top: 64px; }
 .bd-msg.is-bad { color: #9a3b1c; }
 .bd-msg.is-good p { margin: 8px 0 18px; color: var(--muted); }
 .bd-msg.is-good .btn { width: 100%; text-align: center; }
+.bd-pay { margin: 4px 0 18px; padding: 16px; border: 1px solid var(--line); border-radius: 6px; background: #fff; text-align: center; }
+.bd-pay-title { font-weight: 500; color: var(--ink); margin: 0 0 12px; }
+.bd-msg.is-good .bd-pay .bd-pay-btn { width: 100%; }
+.bd-qr { display: flex; justify-content: center; margin: 14px 0 8px; }
+.bd-qr svg { width: 168px; height: 168px; }
+.bd-msg.is-good .bd-pay p.bd-fine { margin: 6px 0 0; }
+.bd-msg.is-good .btn.bd-wa { width: 100%; text-align: center; background: transparent; color: var(--ink); }
+.bd-msg.is-good .btn.bd-wa:hover { background: var(--bg-soft); }
+@media (max-width: 600px) { .bd-qr { display: none; } }

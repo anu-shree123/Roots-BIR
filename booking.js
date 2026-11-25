@@ -113,6 +113,33 @@ var BOOKING_API = '/api/booking';
     dlg.showModal();
   }
 
+  // UPI advance: a button that opens any UPI app on phones, and a QR code to scan on laptops
+  function showPay(pay, ref) {
+    var box = document.createElement('div'); box.className = 'bd-pay';
+    var t = document.createElement('p'); t.className = 'bd-pay-title';
+    t.textContent = pay.amount ? 'Pay the advance of ' + rupees(pay.amount) + ' to confirm' : 'Pay the advance by UPI to confirm';
+    var btnPay = document.createElement('a'); btnPay.className = 'btn btn-solid bd-pay-btn';
+    btnPay.href = pay.link; btnPay.textContent = 'Pay by UPI app';
+    var qr = document.createElement('div'); qr.className = 'bd-qr'; qr.setAttribute('aria-label', 'UPI QR code');
+    var small = document.createElement('p'); small.className = 'bd-fine';
+    small.textContent = 'Or scan with PhonePe, GPay or Paytm. UPI ID: ' + pay.vpa + '. Reference ' + ref + '.';
+    box.appendChild(t); box.appendChild(btnPay); box.appendChild(qr); box.appendChild(small);
+    msg.appendChild(box);
+    loadQr(function () {
+      try {
+        var q = window.qrcode(0, 'M'); q.addData(pay.link); q.make();
+        qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+      } catch (_) { qr.remove(); }
+    }, function () { qr.remove(); });
+  }
+  function loadQr(cb, fail) {
+    if (window.qrcode) return cb();
+    var s = document.createElement('script');
+    s.src = 'vendor/qrcode.js'; // qrcode-generator 1.4.4 (MIT), kept in the repo so it never depends on a CDN
+    s.onload = cb; s.onerror = fail;
+    document.head.appendChild(s);
+  }
+
   bform.addEventListener('submit', function (e) {
     e.preventDefault();
     var f = bform.elements;
@@ -135,12 +162,17 @@ var BOOKING_API = '/api/booking';
         msg.innerHTML = '';
         var h = document.createElement('strong'); h.textContent = 'Thank you, we have your request!';
         var p = document.createElement('p');
-        p.textContent = 'Reference ' + r.reference + '. We will call or WhatsApp you shortly to confirm your dates and share payment details' +
+        p.textContent = 'Reference ' + r.reference + (r.pay
+          ? '. Your booking is confirmed once the advance below is paid. We will confirm on WhatsApp'
+          : '. We will call or WhatsApp you shortly to confirm your dates and share payment details') +
                         (data.email ? ', and we have emailed you the details.' : '.');
         var a = document.createElement('a');
         a.href = WHATSAPP + '?text=' + encodeURIComponent('Hi, I just requested ' + nice(ci.value) + ' to ' + nice(co.value) + ' on your website. Ref ' + r.reference);
         a.target = '_blank'; a.rel = 'noopener'; a.className = 'btn btn-solid'; a.textContent = 'Message us on WhatsApp';
-        msg.appendChild(h); msg.appendChild(p); msg.appendChild(a);
+        msg.appendChild(h); msg.appendChild(p);
+        if (r.pay) showPay(r.pay, r.reference);
+        msg.appendChild(a);
+        if (r.pay) { a.className = 'btn bd-wa'; a.textContent = 'Paid? Send us the screenshot on WhatsApp'; }
         setNote('Request sent. Reference ' + r.reference + '.', 'good');
       })
       .catch(function () {
