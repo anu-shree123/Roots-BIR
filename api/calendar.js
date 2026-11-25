@@ -3,9 +3,14 @@
 //   https://<your-site>/calendar/airbnb.ics    (for Airbnb)
 // Some booking sites refuse script.google.com links, so this fetches the
 // calendar from the Apps Script backend and passes it on unchanged.
-const BACKEND = 'https://script.google.com/macros/s/AKfycbytGkZFkrvusOXvCygp6C2uTux7pvOosbVQyiH1bqrhBXPqmNsGgUV2lfGSPvfZUoat0A/exec';
+const backendUrl = require('./_backend');
 
 module.exports = async (req, res) => {
+  const BACKEND = backendUrl();
+  if (!BACKEND) {
+    res.status(503).json({ ok: false, error: 'Booking is not set up on this preview yet (BOOKING_BACKEND is missing).' });
+    return;
+  }
   const who = String((req.query && req.query.for) || '').toLowerCase();
   const forWho = ['airbnb', 'goibibo'].includes(who) ? who : '';
   try {
