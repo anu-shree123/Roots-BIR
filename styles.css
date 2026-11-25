@@ -438,6 +438,12 @@ html { scroll-padding-top: 64px; }
 .bd-form textarea { resize: vertical; }
 .bd-form .btn { width: 100%; margin-top: 4px; }
 .bd-form .btn:disabled { opacity: .6; cursor: progress; }
+.bd-file input { padding: 8px; font-size: 14px; }
+.bd-file small { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.bd-price s { color: var(--muted); font-weight: 400; margin-right: 2px; }
+.bd-price strong { font-weight: 600; }
+.bd-save { display: inline-block; margin-left: 8px; font-size: 12px; color: #2f5d3a; background: #e8f0e9; padding: 1px 6px; border-radius: 3px; }
+.bd-msg.is-good p.bd-warn { color: #9a3b1c; margin: 0 0 14px; }
 .bd-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .bd-fine { font-size: 13px; color: var(--muted); line-height: 1.5; }
 .bd-msg { margin-top: 14px; font-size: 15px; }

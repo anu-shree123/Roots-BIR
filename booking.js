@@ -105,12 +105,66 @@ var BOOKING_API = '/api/booking';
     var n = r.nights || nights(ci.value, co.value);
     summary.innerHTML = '';
     [nice(ci.value) + ' → ' + nice(co.value),
-     n + (n > 1 ? ' nights' : ' night') + ' · ' + guests.value + (guests.value === '1' ? ' guest' : ' guests'),
-     r.price ? 'Total ' + rupees(r.price) : 'Price confirmed on WhatsApp'
+     n + (n > 1 ? ' nights' : ' night') + ' · ' + guests.value + (guests.value === '1' ? ' guest' : ' guests')
     ].forEach(function (t) { var li = document.createElement('li'); li.textContent = t; summary.appendChild(li); });
+    summary.appendChild(priceLine(r.price, r.regularPrice));
     bform.hidden = false; msg.textContent = ''; msg.className = 'bd-msg';
     submit.disabled = false; submit.textContent = 'Request to book';
     dlg.showModal();
+  }
+
+  // "Total ~~₹9,000~~ ₹7,500": the usual price struck through when the owner set a lower one
+  function priceLine(price, regular) {
+    var li = document.createElement('li'); li.className = 'bd-price';
+    if (!price) { li.textContent = 'Price confirmed on WhatsApp'; return li; }
+    li.appendChild(document.createTextNode('Total '));
+    if (regular > price) {
+      var s = document.createElement('s'); s.textContent = rupees(regular); s.setAttribute('aria-label', 'usual price ' + rupees(regular));
+      li.appendChild(s); li.appendChild(document.createTextNode(' '));
+    }
+    var b = document.createElement('strong'); b.textContent = rupees(price); li.appendChild(b);
+    if (regular > price) {
+      var off = document.createElement('span'); off.className = 'bd-save'; off.textContent = 'You save ' + rupees(regular - price);
+      li.appendChild(off);
+    }
+    return li;
+  }
+
+  // ID upload: photos are shrunk in the browser (about 300 KB each) so they send quickly on mobile data
+  var MAX_PDF = 1.5 * 1024 * 1024;
+  function readIds(input) {
+    var files = Array.prototype.slice.call((input && input.files) || [], 0, 2);
+    return Promise.all(files.map(function (f) {
+      if (f.type === 'application/pdf') {
+        if (f.size > MAX_PDF) return Promise.reject(new Error('That PDF is too big (max 1.5 MB). Please upload a photo instead.'));
+        return toBase64(f).then(function (d) { return { name: f.name, type: f.type, data: d }; });
+      }
+      if (!/^image\//.test(f.type)) return Promise.reject(new Error('Please upload a photo or a PDF of your ID.'));
+      return shrink(f).then(function (d) { return { name: f.name, type: 'image/jpeg', data: d }; });
+    }));
+  }
+  function toBase64(blob) {
+    return new Promise(function (ok, bad) {
+      var r = new FileReader();
+      r.onload = function () { ok(String(r.result).split(',')[1]); };
+      r.onerror = function () { bad(new Error('Could not read the file.')); };
+      r.readAsDataURL(blob);
+    });
+  }
+  function shrink(file) {
+    return new Promise(function (ok, bad) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var k = Math.min(1, 1600 / Math.max(img.width, img.height));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        ok(c.toDataURL('image/jpeg', 0.8).split(',')[1]);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); bad(new Error('Could not open that photo. Please try a JPG or PNG.')); };
+      img.src = url;
+    });
   }
 
   // UPI advance: a button that opens any UPI app on phones, and a QR code to scan on laptops
@@ -147,9 +201,16 @@ var BOOKING_API = '/api/booking';
       name: f.name.value, phone: f.phone.value, email: f.email.value, message: f.message.value,
       website: f.website.value, checkin: ci.value, checkout: co.value, guests: guests.value
     };
-    submit.disabled = true; submit.textContent = 'Sending…'; msg.textContent = '';
-    // text/plain body avoids a CORS preflight, which Apps Script can't answer
-    fetch(BOOKING_API, { method: 'POST', body: JSON.stringify(data) })
+    submit.disabled = true; submit.textContent = 'Sending…'; msg.textContent = ''; msg.className = 'bd-msg';
+    var idError = null;
+    readIds(f.idfile)
+      .catch(function (err) { idError = err; return []; })
+      .then(function (ids) {
+        if (idError) throw idError;
+        if (ids.length) data.idFiles = ids;
+        // text/plain body avoids a CORS preflight, which Apps Script can't answer
+        return fetch(BOOKING_API, { method: 'POST', body: JSON.stringify(data) });
+      })
       .then(function (r) { return r.json(); })
       .then(function (r) {
         if (!r.ok) {
@@ -170,13 +231,14 @@ var BOOKING_API = '/api/booking';
         a.href = WHATSAPP + '?text=' + encodeURIComponent('Hi, I just requested ' + nice(ci.value) + ' to ' + nice(co.value) + ' on your website. Ref ' + r.reference);
         a.target = '_blank'; a.rel = 'noopener'; a.className = 'btn btn-solid'; a.textContent = 'Message us on WhatsApp';
         msg.appendChild(h); msg.appendChild(p);
+        if (r.idError) { var w = document.createElement('p'); w.className = 'bd-warn'; w.textContent = r.idError; msg.appendChild(w); }
         if (r.pay) showPay(r.pay, r.reference);
         msg.appendChild(a);
         if (r.pay) { a.className = 'btn bd-wa'; a.textContent = 'Paid? Send us the screenshot on WhatsApp'; }
         setNote('Request sent. Reference ' + r.reference + '.', 'good');
       })
-      .catch(function () {
-        msg.textContent = 'Could not send. Please try again, or message us on WhatsApp.'; msg.className = 'bd-msg is-bad';
+      .catch(function (err) {
+        msg.textContent = idError ? idError.message : 'Could not send. Please try again, or message us on WhatsApp.'; msg.className = 'bd-msg is-bad';
         submit.disabled = false; submit.textContent = 'Request to book';
       });
   });
