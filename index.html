@@ -408,18 +408,23 @@
   <!-- Direct booking: opens after the dates are confirmed free (see booking.js) -->
   <dialog class="book-dialog" id="book-dialog" aria-labelledby="bd-title">
     <button type="button" class="bd-close" aria-label="Close">&times;</button>
-    <p class="eyebrow">Book direct</p>
-    <h2 id="bd-title">Your dates are <em>free</em></h2>
-    <!-- Step 1: availability message, price, and the 2-month calendar -->
+    <h2 id="bd-title">Choose your <em>dates</em></h2>
+    <!-- Step 1: read top to bottom: status, chosen dates, calendar, then price + Continue -->
     <div class="bd-step1">
       <p class="bd-status" aria-live="polite"></p>
-      <ul class="bd-summary"></ul>
-      <button type="button" class="btn btn-solid bd-next">Continue to book</button>
+      <div class="bd-dates">
+        <div class="bd-date"><span>Check-in</span><b class="bd-ci">Add date</b></div>
+        <div class="bd-date"><span>Check-out</span><b class="bd-co">Add date</b></div>
+      </div>
       <div class="bd-cal" aria-label="Prices and free dates"></div>
+      <div class="bd-bar">
+        <div class="bd-total"></div>
+        <button type="button" class="btn btn-solid bd-next">Continue</button>
+      </div>
     </div>
     <!-- Step 2: guest details -->
     <form class="bd-form" novalidate hidden>
-      <button type="button" class="bd-back">&larr; Change dates</button>
+      <button type="button" class="bd-back"><span>&larr; Change</span> <strong class="bd-recap"></strong></button>
       <label><span>Full name</span><input name="name" autocomplete="name" required maxlength="80"></label>
       <label><span>Phone / WhatsApp</span><input name="phone" type="tel" autocomplete="tel" required placeholder="+91" maxlength="20"></label>
       <label><span>Email (optional)</span><input name="email" type="email" autocomplete="email" maxlength="120"></label>
