@@ -6,7 +6,7 @@ straight to the live site.
 | | Dev (testing) | Live (guests) |
 |---|---|---|
 | Git branch | `dev` | `main` |
-| Website | https://roots-bir-git-dev-roots-bir.vercel.app | https://rootsbir.com |
+| Website | https://roots-bir.vercel.app | https://rootsbir.com |
 | Booking script | Apps Script in the **Roots Bir DEV** sheet (`ENVIRONMENT: 'dev'`) | Apps Script in the real bookings sheet (`ENVIRONMENT: 'live'`) |
 | Bookings saved to | the DEV sheet | the real sheet |
 | Emails | only to you, marked `[DEV]` | to you and the guest |
