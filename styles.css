@@ -423,6 +423,49 @@ html { scroll-padding-top: 64px; }
   margin: auto; padding: 32px 28px 28px; border: 1px solid var(--line); border-radius: 8px;
   background: #fbfaf7; color: var(--ink); box-shadow: 0 24px 60px rgba(30, 28, 25, .25);
 }
+.book-dialog [hidden] { display: none !important; }
+.book-dialog.bd-wide { width: min(760px, calc(100vw - 32px)); }
+.bd-status { font-size: 15px; color: var(--muted); margin: -4px 0 14px; }
+.bd-status.is-good { color: #2f5d3a; }
+.bd-status.is-bad { color: #9a3b1c; }
+.bd-next { width: 100%; margin: 0 0 22px; }
+.bd-back { border: 0; background: none; padding: 0; font: 14px var(--sans); color: var(--muted); cursor: pointer; justify-self: start; }
+.bd-back:hover { color: var(--ink); }
+
+/* Guest calendar: two months, prices per night, booked dates shaded */
+.bd-cal { position: relative; border-top: 1px solid var(--line); padding-top: 14px; }
+.cal-nav { position: absolute; top: 10px; left: 0; right: 0; display: flex; justify-content: space-between; pointer-events: none; }
+.cal-arrow { pointer-events: auto; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; background: #fff; font-size: 20px; line-height: 1; color: var(--ink); cursor: pointer; }
+.cal-arrow:disabled { opacity: .3; cursor: default; }
+.cal-months { display: grid; grid-template-columns: 1fr; gap: 22px; }
+.bd-wide .cal-months { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
+.cal-title { text-align: center; font-weight: 500; font-size: 15px; margin: 6px 0 10px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-dow { text-align: center; font-size: 11px; color: var(--muted); padding-bottom: 4px; }
+.cal-day { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 46px; padding: 3px 0; border: 1px solid transparent; border-radius: 6px; background: #fff; font: 13px var(--sans); color: var(--ink); cursor: pointer; }
+.cal-day:hover:not(:disabled) { border-color: var(--ink); }
+.cal-n { font-weight: 500; line-height: 1.2; }
+.cal-p { font-size: 9.5px; color: var(--muted); line-height: 1.2; margin-top: 2px; white-space: nowrap; }
+.cal-day.is-deal { background: #e4efe1; }
+.cal-day.is-deal .cal-p { color: #2f5d3a; font-weight: 600; }
+.cal-day.is-peak { background: #fbeedb; }
+.cal-day.is-peak .cal-p { color: #8a5413; }
+.cal-day.is-past { background: none; color: #c4c0b6; cursor: default; }
+.cal-day.is-booked { background: repeating-linear-gradient(135deg, #efece6, #efece6 4px, #e5e1d9 4px, #e5e1d9 8px); color: #a29d92; cursor: not-allowed; }
+.cal-day.is-booked .cal-n { text-decoration: line-through; }
+.cal-day.is-checkout { background: repeating-linear-gradient(135deg, #f7f5f0, #f7f5f0 4px, #efece6 4px, #efece6 8px); }
+.cal-day.is-range { background: #dde8da; border-radius: 0; }
+.cal-day.is-start, .cal-day.is-end { background: var(--ink); color: #fbfaf7; }
+.cal-day.is-start .cal-p, .cal-day.is-end .cal-p { color: rgba(251,250,247,.8); }
+.cal-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; font-size: 12px; color: var(--muted); }
+.cal-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -2px; }
+.lg-deal { background: #e4efe1; border: 1px solid #c9dcc4; }
+.lg-peak { background: #fbeedb; border: 1px solid #ecd5b3; }
+.lg-booked { background: repeating-linear-gradient(135deg, #efece6, #efece6 3px, #ddd8ce 3px, #ddd8ce 6px); }
+.cal-wait { font-size: 13px; color: var(--muted); margin-top: 8px; }
+.avail-cal-link { border: 0; background: none; padding: 0; margin-top: 8px; font: 14px var(--sans); color: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; opacity: .9; }
+.hero-text .avail-cal-link { color: #fbfaf7; }
+@media (max-width: 420px) { .book-dialog { padding: 28px 16px 20px; } .cal-p { font-size: 9px; } }
 .book-dialog::backdrop { background: rgba(30, 28, 25, .55); backdrop-filter: blur(2px); }
 .book-dialog h2 { font-size: 30px; margin-bottom: 14px; }
 .book-dialog h2 em { color: var(--sage); }

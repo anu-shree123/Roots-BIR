@@ -111,7 +111,7 @@ function doGet(e) {
     const ranges = getBlockedRanges_(false)
       .filter(r => r.end > today)
       .map(r => ({ start: r.start, end: r.end })); // no guest details leave the sheet
-    return json_({ ok: true, blocked: mergeRanges_(ranges), nightlyRate: rates_().regular,
+    return json_({ ok: true, blocked: mergeRanges_(ranges), nightlyRate: rates_().regular, days: dayPrices_(today),
                    maxGuests: CONFIG.MAX_GUESTS, minNights: CONFIG.MIN_NIGHTS }, p.callback);
   } catch (err) {
     return json_({ ok: false, error: 'Server error: ' + err.message }, p.callback);
@@ -485,6 +485,18 @@ function quote_(a, b) {
     total += night; regular += base > 0 ? base : night;
   }
   return { total: total, regular: regular > total ? regular : total };
+}
+
+/** Price of each night from today to the end of the month 3 months ahead, for the website's calendar:
+ *  {'YYYY-MM-DD': [price, usual price]}. Dates without a price are left out. */
+function dayPrices_(today) {
+  const r = rates_(), custom = customPrices_(), out = {};
+  const t = parseYmd_(today), last = fmt_(new Date(t.getFullYear(), t.getMonth() + 4, 0));
+  for (let d = today, i = 0; d <= last && i < 130; d = addDays_(d, 1), i++) {
+    const base = baseRate_(d, r), night = custom[d] > 0 ? custom[d] : base;
+    if (night > 0) out[d] = [night, base > 0 ? base : night];
+  }
+  return out;
 }
 
 function pricingSheet_() {

@@ -59,31 +59,39 @@ var BOOKING_API = '/api/booking';
     return fetch(BOOKING_API + '?' + q).then(function (r) { return r.json(); });
   }
 
+  var days = {};        // {'YYYY-MM-DD': [price, usual price]} for the coming months
+  var loaded = false;
   if (BOOKING_API) {
     setNote('Book direct with us. No platform fees, and we confirm on WhatsApp.');
-    api({ action: 'availability' }).then(function (r) { if (r.ok) { blocked = r.blocked || []; quickCheck(); } })
-      .catch(function () {});
+    api({ action: 'availability' }).then(function (r) {
+      if (!r.ok) return;
+      blocked = r.blocked || []; days = r.days || {}; loaded = true;
+      quickCheck();
+      if (openCalBtn) openCalBtn.hidden = false;
+      if (dlg && dlg.open) drawCal();
+    }).catch(function () {});
   }
+
+  var openCalBtn = document.getElementById('open-cal');
+  if (openCalBtn) openCalBtn.addEventListener('click', function () { openDialog(null); });
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!BOOKING_API) return openAirbnb();
-    if (!ci.value || !co.value || co.value <= ci.value) return setNote('Please choose a check-out date after check-in.', 'bad');
+    if (!ci.value || !co.value || co.value <= ci.value) return openDialog(null); // pick dates on the calendar
     btn.disabled = true; btn.textContent = 'Checking…';
-    api({ action: 'check', checkin: ci.value, checkout: co.value })
+    check(ci.value, co.value)
       .then(function (r) {
         if (!r.ok) return setNote(r.error || 'Something went wrong. Please try again.', 'bad');
-        if (!r.available) {
-          var c = clash(ci.value, co.value);
-          return setNote('Sorry, those dates are taken' + (c ? ' (' + nice(c.start) + ' to ' + nice(c.end) + ')' : '') +
-                         '. Please try other dates.', 'bad');
-        }
-        setNote('Good news, those dates are free!', 'good');
+        setNote(r.available ? 'Good news, those dates are free!' : 'Sorry, those dates are taken. Pick other dates on the calendar.',
+                r.available ? 'good' : 'bad');
         openDialog(r);
       })
       .catch(function () { setNote('Could not check right now. Please message us on WhatsApp.', 'bad'); })
       .then(function () { btn.disabled = false; btn.textContent = 'Check availability'; });
   });
+
+  function check(a, b) { return api({ action: 'check', checkin: a, checkout: b }); }
 
   function openAirbnb() {
     var a = document.createElement('a');
@@ -95,22 +103,147 @@ var BOOKING_API = '/api/booking';
   // ---- booking dialog ----
   if (!dlg) return;
   var bform = dlg.querySelector('form');
+  var title = dlg.querySelector('#bd-title');
+  var step1 = dlg.querySelector('.bd-step1');
+  var status = dlg.querySelector('.bd-status');
   var summary = dlg.querySelector('.bd-summary');
+  var nextBtn = dlg.querySelector('.bd-next');
+  var cal = dlg.querySelector('.bd-cal');
   var msg = dlg.querySelector('.bd-msg');
   var submit = bform.querySelector('button[type=submit]');
   dlg.querySelector('.bd-close').addEventListener('click', function () { dlg.close(); });
   dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+  nextBtn.addEventListener('click', function () { showStep(2); });
+  dlg.querySelector('.bd-back').addEventListener('click', function () { showStep(1); });
 
+  function setTitle(text, em) {
+    title.textContent = text;
+    if (em) { var e = document.createElement('em'); e.textContent = em; title.appendChild(e); }
+  }
+  function showStep(n) {
+    step1.hidden = n !== 1; bform.hidden = n !== 2;
+    dlg.classList.toggle('bd-wide', n === 1);
+    if (n === 2) { msg.textContent = ''; msg.className = 'bd-msg'; submit.disabled = false; submit.textContent = 'Request to book'; }
+    dlg.scrollTop = 0;
+  }
+
+  // r = the server's answer for the chosen dates, or null to just show the calendar
   function openDialog(r) {
-    var n = r.nights || nights(ci.value, co.value);
-    summary.innerHTML = '';
-    [nice(ci.value) + ' → ' + nice(co.value),
-     n + (n > 1 ? ' nights' : ' night') + ' · ' + guests.value + (guests.value === '1' ? ' guest' : ' guests')
-    ].forEach(function (t) { var li = document.createElement('li'); li.textContent = t; summary.appendChild(li); });
-    summary.appendChild(priceLine(r.price, r.regularPrice));
-    bform.hidden = false; msg.textContent = ''; msg.className = 'bd-msg';
-    submit.disabled = false; submit.textContent = 'Request to book';
-    dlg.showModal();
+    selA = ci.value || null; selB = (ci.value && co.value > ci.value) ? co.value : null;
+    // always open on this month + next, unless the chosen dates are further ahead
+    calMonth = selA && monthOf(selA) > addMonths(firstMonth, 1) ? monthOf(selA) : firstMonth;
+    showResult(r);
+    showStep(1);
+    if (!dlg.open) dlg.showModal();
+  }
+
+  function showResult(r) {
+    summary.innerHTML = ''; summary.hidden = true; nextBtn.hidden = true;
+    status.className = 'bd-status';
+    if (!r) {
+      setTitle('Pick your ', 'dates');
+      status.textContent = selA && !selB ? 'Now tap your check-out date.' : 'Tap your check-in date, then your check-out date.';
+    } else if (!r.ok) {
+      setTitle('Pick your ', 'dates');
+      status.textContent = r.error || 'Something went wrong. Please try again.'; status.className = 'bd-status is-bad';
+    } else if (!r.available) {
+      setTitle('Those dates are ', 'taken');
+      var c = clash(ci.value, co.value);
+      status.textContent = 'Sorry, ' + (c ? 'we are booked from ' + nice(c.start) + ' to ' + nice(c.end) : 'those dates are booked') +
+                           '. Shaded dates are booked. Pick other dates below.';
+      status.className = 'bd-status is-bad';
+    } else {
+      setTitle('Your dates are ', 'free');
+      status.textContent = 'Good news, nobody has booked these dates.'; status.className = 'bd-status is-good';
+      var n = r.nights || nights(ci.value, co.value);
+      [nice(ci.value) + ' → ' + nice(co.value),
+       n + (n > 1 ? ' nights' : ' night') + ' · ' + guests.value + (guests.value === '1' ? ' guest' : ' guests')
+      ].forEach(function (t) { var li = document.createElement('li'); li.textContent = t; summary.appendChild(li); });
+      summary.appendChild(priceLine(r.price, r.regularPrice));
+      summary.hidden = false; nextBtn.hidden = false;
+    }
+    drawCal();
+  }
+
+  // ---- 2-month calendar: this month and next, booked dates shaded ----
+  var calMonth = null, selA = null, selB = null, checking = 0;
+  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  function monthOf(s) { var d = parse(s); return new Date(d.getFullYear(), d.getMonth(), 1); }
+  function addMonths(d, n) { return new Date(d.getFullYear(), d.getMonth() + n, 1); }
+  var firstMonth = monthOf(today), lastMonth = addMonths(firstMonth, 3); // prices are sent for 4 months
+  function bookedNight(s) { for (var i = 0; i < blocked.length; i++) if (s >= blocked[i].start && s < blocked[i].end) return true; return false; }
+  function canCheckout(s) { return selA && !selB && s > selA && !clash(selA, s); }
+  function short(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+
+  function drawCal() {
+    if (!cal) return;
+    if (!calMonth || calMonth < firstMonth) calMonth = firstMonth;
+    if (calMonth > addMonths(lastMonth, -1)) calMonth = addMonths(lastMonth, -1);
+    cal.innerHTML = '';
+    var nav = document.createElement('div'); nav.className = 'cal-nav';
+    var prev = navBtn('‹', 'Previous month', calMonth <= firstMonth, -1);
+    var next = navBtn('›', 'Next month', addMonths(calMonth, 1) >= lastMonth, 1);
+    nav.appendChild(prev); nav.appendChild(next);
+    cal.appendChild(nav);
+    var wrap = document.createElement('div'); wrap.className = 'cal-months';
+    wrap.appendChild(month(calMonth)); wrap.appendChild(month(addMonths(calMonth, 1)));
+    cal.appendChild(wrap);
+    var legend = document.createElement('div'); legend.className = 'cal-legend';
+    legend.innerHTML = '<span><i class="lg-deal"></i>Lower price</span><span><i class="lg-peak"></i>Higher price</span>' +
+                       '<span><i class="lg-booked"></i>Booked</span>';
+    cal.appendChild(legend);
+    if (!loaded) { var w = document.createElement('p'); w.className = 'cal-wait'; w.textContent = 'Loading prices…'; cal.appendChild(w); }
+  }
+  function navBtn(txt, label, disabled, step) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'cal-arrow'; b.textContent = txt;
+    b.setAttribute('aria-label', label); b.disabled = disabled;
+    b.addEventListener('click', function () { calMonth = addMonths(calMonth, step); drawCal(); });
+    return b;
+  }
+  function month(m) {
+    var box = document.createElement('div'); box.className = 'cal-month';
+    var h = document.createElement('p'); h.className = 'cal-title'; h.textContent = MONTHS[m.getMonth()] + ' ' + m.getFullYear();
+    box.appendChild(h);
+    var g = document.createElement('div'); g.className = 'cal-grid';
+    ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(function (d) { var e = document.createElement('span'); e.className = 'cal-dow'; e.textContent = d; g.appendChild(e); });
+    for (var i = 0; i < m.getDay(); i++) g.appendChild(document.createElement('span'));
+    for (var d = new Date(m); d.getMonth() === m.getMonth(); d.setDate(d.getDate() + 1)) g.appendChild(dayCell(iso(d), d.getDate()));
+    box.appendChild(g);
+    return box;
+  }
+  function dayCell(s, n) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'cal-day';
+    var past = s < today, booked = !past && bookedNight(s), info = days[s];
+    var checkoutOnly = booked && canCheckout(s); // the morning a booking starts is still a fine check-out day
+    if (past) b.classList.add('is-past');
+    if (booked) b.classList.add(checkoutOnly ? 'is-checkout' : 'is-booked');
+    if (!past && !booked && info) { if (info[0] < info[1]) b.classList.add('is-deal'); else if (info[0] > info[1]) b.classList.add('is-peak'); }
+    if (s === selA) b.classList.add('is-start');
+    if (s === selB) b.classList.add('is-end');
+    if (selA && selB && s > selA && s < selB) b.classList.add('is-range');
+    var num = document.createElement('span'); num.className = 'cal-n'; num.textContent = n; b.appendChild(num);
+    var pr = document.createElement('span'); pr.className = 'cal-p';
+    pr.textContent = past ? '' : booked ? (checkoutOnly ? 'Check-out' : 'Booked') : (info ? short(info[0]) : '');
+    b.appendChild(pr);
+    b.disabled = past || (booked && !checkoutOnly);
+    b.setAttribute('aria-label', nice(s) + (booked ? (checkoutOnly ? ', check-out only' : ', booked') : info ? ', ' + short(info[0]) + ' a night' : ''));
+    if (!b.disabled) b.addEventListener('click', function () { tap(s); });
+    return b;
+  }
+  function tap(s) {
+    if (canCheckout(s)) {
+      selB = s;
+      ci.value = selA; co.value = selB; co.min = addDays(selA, 1);
+      var mine = ++checking;
+      status.textContent = 'Checking ' + nice(selA) + ' to ' + nice(selB) + '…'; status.className = 'bd-status';
+      summary.hidden = true; nextBtn.hidden = true; drawCal();
+      check(selA, selB).then(function (r) { if (mine === checking) { showResult(r); quickCheck(); } })
+        .catch(function () { if (mine === checking) showResult({ ok: false, error: 'Could not check right now. Please message us on WhatsApp.' }); });
+      return;
+    }
+    if (bookedNight(s)) return;
+    selA = s; selB = null; checking++;
+    showResult(null);
   }
 
   // "Total ~~₹9,000~~ ₹7,500": the usual price struck through when the owner set a lower one

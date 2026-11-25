@@ -54,6 +54,7 @@
         <button type="submit" class="btn btn-solid">Check availability</button>
       </form>
       <p class="avail-note" id="book" aria-live="polite">Bookings are handled securely on Airbnb.</p>
+      <button type="button" class="avail-cal-link" id="open-cal" hidden>See prices and free dates</button>
     </div>
     <a class="scroll-cue" href="#intro" aria-label="Scroll to the story"><span></span></a>
   </section>
@@ -409,8 +410,16 @@
     <button type="button" class="bd-close" aria-label="Close">&times;</button>
     <p class="eyebrow">Book direct</p>
     <h2 id="bd-title">Your dates are <em>free</em></h2>
-    <ul class="bd-summary"></ul>
-    <form class="bd-form" novalidate>
+    <!-- Step 1: availability message, price, and the 2-month calendar -->
+    <div class="bd-step1">
+      <p class="bd-status" aria-live="polite"></p>
+      <ul class="bd-summary"></ul>
+      <button type="button" class="btn btn-solid bd-next">Continue to book</button>
+      <div class="bd-cal" aria-label="Prices and free dates"></div>
+    </div>
+    <!-- Step 2: guest details -->
+    <form class="bd-form" novalidate hidden>
+      <button type="button" class="bd-back">&larr; Change dates</button>
       <label><span>Full name</span><input name="name" autocomplete="name" required maxlength="80"></label>
       <label><span>Phone / WhatsApp</span><input name="phone" type="tel" autocomplete="tel" required placeholder="+91" maxlength="20"></label>
       <label><span>Email (optional)</span><input name="email" type="email" autocomplete="email" maxlength="120"></label>
