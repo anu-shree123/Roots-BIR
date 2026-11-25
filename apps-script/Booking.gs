@@ -22,7 +22,10 @@ const CONFIG = {
   PROPERTY_NAME: 'Roots Bir',
   OWNER_EMAIL: '',            // leave '' to use the Gmail this script runs as
   OWNER_PHONE: '+91 93117 10013', // shown in the guest's email
-  UPI_ID: '',                 // e.g. 'rootsbir@okaxis' (shown in guest email)
+  UPI_ID: '',                 // business UPI ID from PhonePe / Paytm Business, e.g. 'Q123456789@ybl'
+  UPI_NAME: 'Roots Bir',      // name shown in the guest's UPI app
+  ADVANCE_PERCENT: 50,        // advance asked on the website, % of the total (needs NIGHTLY_RATE)
+  ADVANCE_FIXED: 0,           // or a fixed advance in rupees, e.g. 2000 (used if more than 0)
   NIGHTLY_RATE: 0,            // e.g. 3500. 0 = don't show a price
   MAX_GUESTS: 4,              // matches the website's guest dropdown
   MIN_NIGHTS: 1,
@@ -188,12 +191,25 @@ function createBooking_(d) {
     SpreadsheetApp.flush();
     CacheService.getScriptCache().remove('blocked_v1');
 
-    sendEmails_({ ref, name, phone, email, guests, checkin, checkout, n, amount, message });
-    return { ok: true, reference: ref, nights: n, amount: amount || null,
+    const pay = upiPayment_(ref, amount);
+    sendEmails_({ ref, name, phone, email, guests, checkin, checkout, n, amount, message, pay });
+    return { ok: true, reference: ref, nights: n, amount: amount || null, pay: pay,
              message: 'Booking request received! We will confirm on WhatsApp/phone shortly.' };
   } finally {
     lock.releaseLock();
   }
+}
+
+/** UPI payment details for the advance, or null if no UPI ID is set. */
+function upiPayment_(ref, total) {
+  if (!CONFIG.UPI_ID) return null;
+  let adv = CONFIG.ADVANCE_FIXED > 0 ? CONFIG.ADVANCE_FIXED
+          : (total ? Math.round(total * CONFIG.ADVANCE_PERCENT / 100) : 0);
+  if (total && adv > total) adv = total;
+  const q = ['pa=' + encodeURIComponent(CONFIG.UPI_ID).replace('%40', '@'), 'pn=' + encodeURIComponent(CONFIG.UPI_NAME),
+             'cu=INR', 'tn=' + encodeURIComponent('Roots Bir ' + ref), 'tr=' + encodeURIComponent(ref)];
+  if (adv) q.push('am=' + adv.toFixed(2));
+  return { vpa: CONFIG.UPI_ID, name: CONFIG.UPI_NAME, amount: adv || null, link: 'upi://pay?' + q.join('&') };
 }
 
 function sendEmails_(b) {
@@ -216,6 +232,8 @@ function sendEmails_(b) {
           'Reference: ' + b.ref + '\nGuest: ' + b.name + '\nPhone: ' + b.phone +
           '\nEmail: ' + (b.email || '-') + '\nGuests: ' + b.guests + '\nDates: ' + when +
           '\nAmount: ' + amt + '\nMessage: ' + (b.message || '-') +
+          (b.pay ? '\nAdvance asked: ' + (b.pay.amount ? '₹' + b.pay.amount.toLocaleString('en-IN') : 'guest enters amount') +
+                   ' by UPI to ' + b.pay.vpa + '. Look for "' + b.ref + '" in your PhonePe/Paytm Business app.' : '') +
           '\n\nIt is in your sheet with Booking Status "Pending". The dates are NOT blocked anywhere yet, ' +
           'so check they are still free before confirming.\n' +
           'Once the guest pays, change Booking Status to "Confirmed": the dates are then blocked on your ' +
@@ -231,9 +249,11 @@ function sendEmails_(b) {
       body: 'Hi ' + b.name + ',\n\nThank you for choosing ' + CONFIG.PROPERTY_NAME + ', Bir!\n\n' +
             'Your request: ' + when + ', ' + b.guests + ' guest(s).\nReference: ' + b.ref +
             '\nAmount: ' + amt + '\n\n' +
-            'This is a booking request. We will contact you shortly to confirm your dates and share payment details. ' +
-            'Your booking is confirmed once the advance is received.' +
-            (CONFIG.UPI_ID ? '\nYou can pay the advance by UPI to: ' + CONFIG.UPI_ID : '') +
+            'This is a booking request. Your booking is confirmed once the advance is received. ' +
+            (b.pay ? 'We will confirm on WhatsApp as soon as your payment arrives.'
+                   : 'We will contact you shortly to confirm your dates and share payment details.') +
+            (b.pay ? '\n\nPay the advance' + (b.pay.amount ? ' of ₹' + b.pay.amount.toLocaleString('en-IN') : '') +
+                     ' by UPI to ' + b.pay.vpa + ' (any UPI app), with reference ' + b.ref + ' in the note.' : '') +
             (CONFIG.OWNER_PHONE ? '\nPhone / WhatsApp: ' + CONFIG.OWNER_PHONE : '') +
             '\n\nSee you in Bir!\n' + CONFIG.PROPERTY_NAME
     });

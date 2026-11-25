@@ -25,8 +25,9 @@ Do all of this signed in as **rootsbir1@gmail.com**. It takes about 15 minutes.
 1. In Airbnb (as host): **Calendar → pick the listing → Availability → Connect calendars (Sync calendars) → Export calendar**. Copy the link (it ends in `.ics`).
 2. In the `Booking` file, paste it between the quotes on the line `AIRBNB_ICAL: '',`.
 3. Goibibo: in the Goibibo / MakeMyTrip extranet (InGo-MMT), look for **Calendar sync / iCal**. If it offers an export link, paste it into `GOIBIBO_ICAL: '',`. If it doesn't, that's okay: Goibibo bookings still reach the sheet through your email script, and the sheet is checked too.
-4. Optional: set `NIGHTLY_RATE` (for example `3500`) to show guests a price, and `UPI_ID` to show your UPI ID in the guest's email.
-5. Click **Save**.
+4. Optional: set `NIGHTLY_RATE` (for example `3500`) to show guests a price.
+5. Optional, for payments: set `UPI_ID` to your business UPI ID from the PhonePe Business or Paytm for Business app, and `ADVANCE_PERCENT` (for example `50`) or `ADVANCE_FIXED` (for example `2000`). After a request, the guest then sees a "Pay by UPI app" button and a QR code with the amount and reference filled in, and the same details by email. Check the payment in your business app, then mark the booking Confirmed.
+6. Click **Save**.
 
 ## Step 4. Run the setup once
 
