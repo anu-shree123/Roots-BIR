@@ -45,17 +45,17 @@ Test it: open `YOUR_URL?action=availability` in a browser. You should see someth
 
 ## Step 6. Connect the website
 
-1. In the GitHub repo, open `booking.js`.
-2. Paste the URL between the quotes on the line `var BOOKING_API = '';` and commit.
+1. In the GitHub repo, open `api/booking.js` and `api/calendar.js`.
+2. Paste the URL between the quotes on the line `const BACKEND = '...';` in both files, and commit.
 3. Vercel redeploys by itself in a minute or two.
 
-Until this URL is filled in, the form keeps working the old way and opens Airbnb.
+The website's browser code (`booking.js`) only talks to `/api/booking` on the same site, which passes requests on to Apps Script. This avoids browser blocks on Google's script links.
 
 ## Step 7. Block website bookings on Airbnb and Goibibo
 
-1. Your calendar link for Airbnb is: `YOUR_URL?action=ical&for=airbnb`
+1. Your calendar link for Airbnb is: `https://rootsbir.com/calendar/airbnb.ics`
 2. In Airbnb: **Calendar → Availability → Connect calendars → Import calendar**, paste that link, and name it "Roots Bir website".
-3. For Goibibo, if its extranet lets you import a calendar, use `YOUR_URL?action=ical&for=goibibo`.
+3. For Goibibo, use `https://rootsbir.com/calendar/goibibo.ics`.
 
 Airbnb gets your website and Goibibo bookings. Goibibo gets your website and Airbnb bookings. Neither sees guest names, only "Reserved".
 
