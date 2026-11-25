@@ -69,6 +69,39 @@ Airbnb and Goibibo refresh imported calendars every few hours, so a clash in tha
 - Once the guest pays, change Booking Status to **Confirmed**. The dates are then blocked on the website straight away, and on Airbnb and Goibibo at their next refresh (a few hours).
 - If you don't go ahead, change Booking Status to **Cancelled**.
 
+## Your pricing page
+
+Set prices from your phone, like the Airbnb calendar. Guests see the usual
+price struck through when your price for their dates is lower.
+
+1. After pasting new code, run **setupBooking** once more and allow the new
+   permission (Google Drive, used for guest ID uploads). It also adds a
+   **Pricing** tab to the sheet.
+2. **Deploy → New deployment → Web app**. Execute as: **Me**. Who has
+   access: **Only myself**. Click **Deploy** and copy the link.
+   (Keep your existing "Anyone" deployment as it is: the website uses that one.)
+3. Add `?page=owner` to the end of that link and bookmark it on your phone,
+   signed in to Google as rootsbir1@gmail.com. Example:
+   `https://script.google.com/macros/s/XXXX/exec?page=owner`
+4. On the page:
+   - **Usual price** and **Fri & Sat nights**: your normal prices.
+   - Tap a date (or two dates for a range), type a price, and tap **Set price**.
+     **Back to usual** removes it.
+   - Booked dates are shaded.
+
+Prices for particular dates are saved in the **Pricing** tab
+(Date, Price, Note), so you can also edit them there.
+
+When you update the code later, publish a new version of **both**
+deployments (Manage deployments → pencil → New version, for each one).
+
+## Guest ID uploads
+
+Guests can attach a photo or PDF of their ID in the booking form (optional).
+Files are saved in a private Google Drive folder, **Roots Bir - Guest IDs**,
+that only you can open. In the sheet, **ID Collected** shows **Uploaded**
+as a link to the file, and the owner email lists the links.
+
 ## When you change the code later
 
 Editing the code does not update the live website link by itself. Go to

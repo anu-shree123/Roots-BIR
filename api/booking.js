@@ -8,7 +8,8 @@ function readBody(req) {
   if (req.body && typeof req.body === 'object') return Promise.resolve(JSON.stringify(req.body));
   return new Promise((resolve) => {
     let data = '';
-    req.on('data', (c) => { data += c; if (data.length > 20000) req.destroy(); });
+    // ID photos fit well under this (Vercel's own limit is 4.5 MB)
+    req.on('data', (c) => { data += c; if (data.length > 4500000) req.destroy(); });
     req.on('end', () => resolve(data));
   });
 }
