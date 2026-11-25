@@ -77,6 +77,15 @@ The script isn't deployed by GitHub, so it follows the same steps by hand:
 3. **Vercel**: in the `roots-bir` project, open **Settings → Environment
    Variables** and add `BOOKING_BACKEND` with the DEV `/exec` link. Tick
    **Preview** only, not Production. Save.
-4. **GitHub (recommended)**: in the repo, open **Settings → Branches → Add
-   rule** for `main`, and tick **Require a pull request before merging**.
-   This stops anyone from pushing straight to the live site.
+4. **GitHub: lock the live branch.** In the repo, open **Settings → Rules →
+   Rulesets → New ruleset → New branch ruleset**:
+   - Name: `Protect live`. Enforcement status: **Active**.
+   - Bypass list: leave **empty**, so the rule applies to you too.
+   - Target branches: **Add target → Include default branch** (`main`).
+   - Tick **Restrict deletions**, **Block force pushes**, **Require a pull
+     request before merging**, and **Require status checks to pass**. Under
+     the last one, click **Add checks**, and add **Only dev can go live**.
+   - Click **Create**.
+
+   After this, `main` only changes through a pull request from `dev`. Any
+   other branch gets a red "Only dev can go live" check and can't be merged.
