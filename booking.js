@@ -133,15 +133,14 @@ var BOOKING_API = '/api/booking';
         bform.hidden = true;
         msg.className = 'bd-msg is-good';
         msg.innerHTML = '';
-        var h = document.createElement('strong'); h.textContent = 'Thank you, your dates are on hold!';
+        var h = document.createElement('strong'); h.textContent = 'Thank you, we have your request!';
         var p = document.createElement('p');
-        p.textContent = 'Reference ' + r.reference + '. We will call or WhatsApp you shortly to confirm' +
+        p.textContent = 'Reference ' + r.reference + '. We will call or WhatsApp you shortly to confirm your dates and share payment details' +
                         (data.email ? ', and we have emailed you the details.' : '.');
         var a = document.createElement('a');
         a.href = WHATSAPP + '?text=' + encodeURIComponent('Hi, I just requested ' + nice(ci.value) + ' to ' + nice(co.value) + ' on your website. Ref ' + r.reference);
         a.target = '_blank'; a.rel = 'noopener'; a.className = 'btn btn-solid'; a.textContent = 'Message us on WhatsApp';
         msg.appendChild(h); msg.appendChild(p); msg.appendChild(a);
-        blocked.push({ start: ci.value, end: co.value });
         setNote('Request sent. Reference ' + r.reference + '.', 'good');
       })
       .catch(function () {

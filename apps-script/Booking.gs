@@ -33,6 +33,10 @@ const CONFIG = {
 
   // Booking Status values that do NOT block dates
   FREE_STATUSES: ['cancelled', 'canceled', 'rejected', 'declined', 'refunded', 'no show'],
+
+  // A website booking blocks dates (on the website, Airbnb and Goibibo) only once
+  // its Booking Status is one of these. Unpaid "Pending" requests block nothing.
+  CONFIRMED_STATUSES: ['confirmed', 'paid', 'advance paid', 'checked in', 'checked-in', 'checked out', 'checked-out', 'completed'],
 };
 // ================================================================
 
@@ -200,8 +204,10 @@ function sendEmails_(b) {
           'Reference: ' + b.ref + '\nGuest: ' + b.name + '\nPhone: ' + b.phone +
           '\nEmail: ' + (b.email || '-') + '\nGuests: ' + b.guests + '\nDates: ' + when +
           '\nAmount: ' + amt + '\nMessage: ' + (b.message || '-') +
-          '\n\nIt is in your sheet with Booking Status "Pending". Change it to "Confirmed" once paid, ' +
-          'or "Cancelled" to free the dates.'
+          '\n\nIt is in your sheet with Booking Status "Pending". The dates are NOT blocked anywhere yet, ' +
+          'so check they are still free before confirming.\n' +
+          'Once the guest pays, change Booking Status to "Confirmed": the dates are then blocked on your ' +
+          'website straight away, and on Airbnb/Goibibo at their next calendar refresh (a few hours).'
   });
 
   if (b.email) {
@@ -213,7 +219,8 @@ function sendEmails_(b) {
       body: 'Hi ' + b.name + ',\n\nThank you for choosing ' + CONFIG.PROPERTY_NAME + ', Bir!\n\n' +
             'Your request: ' + when + ', ' + b.guests + ' guest(s).\nReference: ' + b.ref +
             '\nAmount: ' + amt + '\n\n' +
-            'We are holding these dates for you and will contact you shortly to confirm.' +
+            'This is a booking request. We will contact you shortly to confirm your dates and share payment details. ' +
+            'Your booking is confirmed once the advance is received.' +
             (CONFIG.UPI_ID ? '\nYou can pay the advance by UPI to: ' + CONFIG.UPI_ID : '') +
             (CONFIG.OWNER_PHONE ? '\nPhone / WhatsApp: ' + CONFIG.OWNER_PHONE : '') +
             '\n\nSee you in Bir!\n' + CONFIG.PROPERTY_NAME
@@ -257,7 +264,10 @@ function sheetRanges_() {
     if (!start) continue;
     if (!end && nt >= 0 && Number(r[nt]) > 0) end = addDays_(start, Number(r[nt]));
     if (!end || end <= start) end = addDays_(start, 1);
-    out.push({ start, end, source: md >= 0 ? String(r[md]).trim().toLowerCase() || 'sheet' : 'sheet' });
+    const source = md >= 0 ? String(r[md]).trim().toLowerCase() || 'sheet' : 'sheet';
+    // Unpaid website requests don't block anything until marked Confirmed
+    if (source === 'website' && CONFIG.CONFIRMED_STATUSES.indexOf(status) < 0) continue;
+    out.push({ start, end, source });
   }
   return out;
 }

@@ -64,9 +64,9 @@ Airbnb and Goibibo refresh imported calendars every few hours, so a clash in tha
 ## Daily use
 
 - A website booking appears in the sheet with **Booking Medium = Website** and **Booking Status = Pending**. You get an email.
-- Pending bookings already block the dates.
-- Once the guest pays, change Booking Status to **Confirmed**.
-- To free the dates, change Booking Status to **Cancelled**.
+- Pending requests do **not** block any dates, on the website, Airbnb or Goibibo. Check the dates are still free before you confirm.
+- Once the guest pays, change Booking Status to **Confirmed**. The dates are then blocked on the website straight away, and on Airbnb and Goibibo at their next refresh (a few hours).
+- If you don't go ahead, change Booking Status to **Cancelled**.
 
 ## When you change the code later
 
