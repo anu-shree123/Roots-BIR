@@ -1,31 +1,6 @@
 // Roots Bir · small scripts, no libraries
 
-// Availability form: opens the Airbnb listing with the chosen dates
-(function () {
-  var form = document.getElementById('avail');
-  if (!form) return;
-  var LISTING = 'https://www.airbnb.co.in/rooms/1797625331066146081';
-  var ci = document.getElementById('ci');
-  var co = document.getElementById('co');
-  var iso = function (d) { return d.toISOString().slice(0, 10); };
-  var today = new Date();
-  ci.min = iso(today);
-  co.min = iso(new Date(today.getTime() + 864e5));
-  ci.addEventListener('change', function () {
-    if (!ci.value) return;
-    var next = new Date(ci.value); next.setDate(next.getDate() + 1);
-    co.min = iso(next);
-    if (!co.value || co.value <= ci.value) co.value = iso(next);
-  });
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var url = LISTING + '?check_in=' + ci.value + '&check_out=' + co.value +
-              '&adults=' + document.getElementById('guests').value;
-    var a = document.createElement('a');
-    a.href = url; a.target = '_blank'; a.rel = 'noopener';
-    document.body.appendChild(a); a.click(); a.remove();
-  });
-})();
+// Availability form and direct booking: see booking.js
 
 (function () {
   var y = document.getElementById('year');
