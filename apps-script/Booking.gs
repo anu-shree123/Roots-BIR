@@ -70,10 +70,14 @@ function testBooking() {
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
-  const action = (p.action || 'availability').toLowerCase();
+  let action = (p.action || 'availability').toLowerCase();
+  let forWho = String(p.for || '').toLowerCase();
+  // Links ending in .ics, for sites that insist on it: .../exec/goibibo.ics or .../exec/airbnb.ics
+  const path = String((e && e.pathInfo) || '').toLowerCase().match(/^(\w+)\.ics$/);
+  if (path) { action = 'ical'; forWho = path[1]; }
   try {
     if (action === 'ical') {
-      return ContentService.createTextOutput(buildIcal_(String(p.for || '').toLowerCase()))
+      return ContentService.createTextOutput(buildIcal_(forWho === 'all' ? '' : forWho))
         .setMimeType(ContentService.MimeType.ICAL);
     }
     if (action === 'check') {
