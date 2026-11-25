@@ -53,7 +53,7 @@
         </label>
         <button type="submit" class="btn btn-solid">Check availability</button>
       </form>
-      <p class="avail-note" id="book">Bookings are handled securely on Airbnb.</p>
+      <p class="avail-note" id="book" aria-live="polite">Bookings are handled securely on Airbnb.</p>
     </div>
     <a class="scroll-cue" href="#intro" aria-label="Scroll to the story"><span></span></a>
   </section>
@@ -404,6 +404,25 @@
   <!-- Mobile: booking button always within reach -->
   <a href="#book" class="mobile-book btn btn-solid">Check availability</a>
 
+  <!-- Direct booking: opens after the dates are confirmed free (see booking.js) -->
+  <dialog class="book-dialog" id="book-dialog" aria-labelledby="bd-title">
+    <button type="button" class="bd-close" aria-label="Close">&times;</button>
+    <p class="eyebrow">Book direct</p>
+    <h2 id="bd-title">Your dates are <em>free</em></h2>
+    <ul class="bd-summary"></ul>
+    <form class="bd-form" novalidate>
+      <label><span>Full name</span><input name="name" autocomplete="name" required maxlength="80"></label>
+      <label><span>Phone / WhatsApp</span><input name="phone" type="tel" autocomplete="tel" required placeholder="+91" maxlength="20"></label>
+      <label><span>Email (optional)</span><input name="email" type="email" autocomplete="email" maxlength="120"></label>
+      <label><span>Anything we should know? (optional)</span><textarea name="message" rows="2" maxlength="500"></textarea></label>
+      <label class="bd-hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+      <button type="submit" class="btn btn-solid">Request to book</button>
+      <p class="bd-fine">No payment now. We hold your dates and confirm on WhatsApp, then you pay by UPI or at the property.</p>
+    </form>
+    <div class="bd-msg" aria-live="polite"></div>
+  </dialog>
+
   <script src="main.js"></script>
+  <script src="booking.js"></script>
 </body>
 </html>

@@ -408,3 +408,39 @@ html { scroll-padding-top: 64px; }
 @media (max-width: 900px) {
   .foot-grid { grid-template-columns: 1fr; }
 }
+
+/* =========================================================
+   Direct booking dialog (booking.js)
+   ========================================================= */
+.avail-note.is-good { color: #d9e6d2; }
+.avail-note.is-bad { color: #ffd9c7; }
+.hero-text .avail-note.is-good { color: #d9e6d2; }
+.hero-text .avail-note.is-bad { color: #ffd9c7; }
+.avail-form .btn:disabled { opacity: .6; cursor: progress; }
+
+.book-dialog {
+  width: min(460px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto;
+  margin: auto; padding: 32px 28px 28px; border: 1px solid var(--line); border-radius: 8px;
+  background: #fbfaf7; color: var(--ink); box-shadow: 0 24px 60px rgba(30, 28, 25, .25);
+}
+.book-dialog::backdrop { background: rgba(30, 28, 25, .55); backdrop-filter: blur(2px); }
+.book-dialog h2 { font-size: 30px; margin-bottom: 14px; }
+.book-dialog h2 em { color: var(--sage); }
+.bd-close { position: absolute; top: 10px; right: 14px; border: 0; background: none; font-size: 28px; line-height: 1; color: var(--muted); cursor: pointer; padding: 4px 8px; }
+.bd-summary { list-style: none; padding: 14px 0; margin-bottom: 18px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 15px; }
+.bd-summary li + li { color: var(--muted); }
+.bd-summary li:last-child { color: var(--ink); font-weight: 500; }
+.bd-form { display: grid; gap: 14px; }
+.bd-form[hidden] { display: none; }
+.bd-form label { display: flex; flex-direction: column; gap: 4px; }
+.bd-form span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.bd-form input, .bd-form textarea { font: 16px var(--sans); color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; width: 100%; }
+.bd-form textarea { resize: vertical; }
+.bd-form .btn { width: 100%; margin-top: 4px; }
+.bd-form .btn:disabled { opacity: .6; cursor: progress; }
+.bd-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.bd-fine { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.bd-msg { margin-top: 14px; font-size: 15px; }
+.bd-msg.is-bad { color: #9a3b1c; }
+.bd-msg.is-good p { margin: 8px 0 18px; color: var(--muted); }
+.bd-msg.is-good .btn { width: 100%; text-align: center; }
