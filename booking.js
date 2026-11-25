@@ -2,7 +2,7 @@
 //
 // SETUP: paste your Apps Script Web App URL between the quotes below.
 // While it is empty, the form keeps the old behaviour and opens Airbnb.
-var BOOKING_API = '';
+var BOOKING_API = 'https://script.google.com/macros/s/AKfycbytGkZFkrvusOXvCygp6C2uTux7pvOosbVQyiH1bqrhBXPqmNsGgUV2lfGSPvfZUoat0A/exec';
 
 (function () {
   var form = document.getElementById('avail');

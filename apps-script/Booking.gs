@@ -44,7 +44,8 @@ function setupBooking() {
   // touch the services so Google asks for all permissions now
   UrlFetchApp.getRequest('https://www.google.com');
   MailApp.getRemainingDailyQuota();
-  if (Session.getScriptTimeZone() !== CONFIG.TIMEZONE || ss.getSpreadsheetTimeZone() !== CONFIG.TIMEZONE) {
+  const india = tz => /^Asia\/(Kolkata|Calcutta)$/.test(tz); // same zone, two names
+  if (!india(Session.getScriptTimeZone()) || !india(ss.getSpreadsheetTimeZone())) {
     Logger.log('WARNING: set the time zone to India (GMT+05:30) in Apps Script > Project Settings ' +
                'AND in the sheet > File > Settings. Now: script=' + Session.getScriptTimeZone() +
                ', sheet=' + ss.getSpreadsheetTimeZone());
@@ -264,7 +265,11 @@ function icalRanges_(url, source, fresh) {
   if (!text) {
     try {
       const res = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true });
-      if (res.getResponseCode() !== 200) { Logger.log(source + ' iCal HTTP ' + res.getResponseCode()); return []; }
+      if (res.getResponseCode() !== 200) {
+        Logger.log(source + ' iCal HTTP ' + res.getResponseCode() + ' for ' + url.replace(/([?&]s=)[^&]+/, '$1...') +
+                   ' :: ' + res.getContentText().slice(0, 150).replace(/\s+/g, ' '));
+        return [];
+      }
       text = res.getContentText();
       try { cache.put(key, text, 900); } catch (_) {} // 15 min (skips if too big)
     } catch (err) {
