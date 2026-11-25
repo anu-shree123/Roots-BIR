@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/calendar/goibibo.ics", "destination": "/api/calendar?for=goibibo" },
+    { "source": "/calendar/airbnb.ics", "destination": "/api/calendar?for=airbnb" }
+  ]
+}
