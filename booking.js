@@ -1,8 +1,9 @@
 // Roots Bir · direct booking (talks to the free Google Apps Script backend)
 //
-// SETUP: paste your Apps Script Web App URL between the quotes below.
-// While it is empty, the form keeps the old behaviour and opens Airbnb.
-var BOOKING_API = 'https://script.google.com/macros/s/AKfycbytGkZFkrvusOXvCygp6C2uTux7pvOosbVQyiH1bqrhBXPqmNsGgUV2lfGSPvfZUoat0A/exec';
+// The browser talks to /api/booking on this same site (api/booking.js), which
+// passes requests on to the Google Apps Script backend. The backend URL is set
+// in api/booking.js. Set this to '' to switch back to opening Airbnb.
+var BOOKING_API = '/api/booking';
 
 (function () {
   var form = document.getElementById('avail');
