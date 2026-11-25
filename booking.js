@@ -106,7 +106,10 @@ var BOOKING_API = '/api/booking';
   var title = dlg.querySelector('#bd-title');
   var step1 = dlg.querySelector('.bd-step1');
   var status = dlg.querySelector('.bd-status');
-  var summary = dlg.querySelector('.bd-summary');
+  var bar = dlg.querySelector('.bd-bar');
+  var totalBox = dlg.querySelector('.bd-total');
+  var ciChip = dlg.querySelector('.bd-ci'), coChip = dlg.querySelector('.bd-co');
+  var recap = dlg.querySelector('.bd-recap');
   var nextBtn = dlg.querySelector('.bd-next');
   var cal = dlg.querySelector('.bd-cal');
   var msg = dlg.querySelector('.bd-msg');
@@ -137,31 +140,38 @@ var BOOKING_API = '/api/booking';
     if (!dlg.open) dlg.showModal();
   }
 
+  function fmtShort(s) { return parse(s).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }); }
+  function chips() {
+    ciChip.textContent = selA ? fmtShort(selA) : 'Add date';
+    coChip.textContent = selB ? fmtShort(selB) : 'Add date';
+    ciChip.parentNode.classList.toggle('is-active', !selA);
+    coChip.parentNode.classList.toggle('is-active', !!selA && !selB);
+  }
+  function say(text, kind) { status.textContent = text; status.className = 'bd-status' + (kind ? ' is-' + kind : ''); }
+
+  // One short line on top, the chosen dates, the calendar, and the price bar at the bottom
   function showResult(r) {
-    summary.innerHTML = ''; summary.hidden = true; nextBtn.hidden = true;
-    status.className = 'bd-status';
+    bar.hidden = true;
     if (!r) {
-      setTitle('Pick your ', 'dates');
-      status.textContent = selA && !selB ? 'Now tap your check-out date.' : 'Tap your check-in date, then your check-out date.';
+      setTitle('Choose your ', 'dates');
+      say(selA && !selB ? 'Now tap your check-out date.' : 'Tap check-in, then check-out.');
     } else if (!r.ok) {
-      setTitle('Pick your ', 'dates');
-      status.textContent = r.error || 'Something went wrong. Please try again.'; status.className = 'bd-status is-bad';
+      setTitle('Choose your ', 'dates');
+      say(r.error || 'Something went wrong. Please try again.', 'bad');
     } else if (!r.available) {
       setTitle('Those dates are ', 'taken');
-      var c = clash(ci.value, co.value);
-      status.textContent = 'Sorry, ' + (c ? 'we are booked from ' + nice(c.start) + ' to ' + nice(c.end) : 'those dates are booked') +
-                           '. Shaded dates are booked. Pick other dates below.';
-      status.className = 'bd-status is-bad';
+      say(nice(ci.value) + ' to ' + nice(co.value) + ' is booked. Pick new dates below.', 'bad');
+      selA = selB = null; // clear the clash so the booked dates show as booked
     } else {
       setTitle('Your dates are ', 'free');
-      status.textContent = 'Good news, nobody has booked these dates.'; status.className = 'bd-status is-good';
       var n = r.nights || nights(ci.value, co.value);
-      [nice(ci.value) + ' → ' + nice(co.value),
-       n + (n > 1 ? ' nights' : ' night') + ' · ' + guests.value + (guests.value === '1' ? ' guest' : ' guests')
-      ].forEach(function (t) { var li = document.createElement('li'); li.textContent = t; summary.appendChild(li); });
-      summary.appendChild(priceLine(r.price, r.regularPrice));
-      summary.hidden = false; nextBtn.hidden = false;
+      say(n + (n > 1 ? ' nights' : ' night') + ' · ' + guests.value + (guests.value === '1' ? ' guest' : ' guests'), 'good');
+      totalBox.innerHTML = '';
+      totalBox.appendChild(priceLine(r.price, r.regularPrice));
+      recap.textContent = fmtShort(ci.value) + ' – ' + fmtShort(co.value) + (r.price ? ' · ' + rupees(r.price) : '');
+      bar.hidden = false;
     }
+    chips();
     drawCal();
   }
 
@@ -173,7 +183,7 @@ var BOOKING_API = '/api/booking';
   var firstMonth = monthOf(today), lastMonth = addMonths(firstMonth, 3); // prices are sent for 4 months
   function bookedNight(s) { for (var i = 0; i < blocked.length; i++) if (s >= blocked[i].start && s < blocked[i].end) return true; return false; }
   function canCheckout(s) { return selA && !selB && s > selA && !clash(selA, s); }
-  function short(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+  function short(n) { return Number(n).toLocaleString('en-IN'); }
 
   function drawCal() {
     if (!cal) return;
@@ -189,8 +199,8 @@ var BOOKING_API = '/api/booking';
     wrap.appendChild(month(calMonth)); wrap.appendChild(month(addMonths(calMonth, 1)));
     cal.appendChild(wrap);
     var legend = document.createElement('div'); legend.className = 'cal-legend';
-    legend.innerHTML = '<span><i class="lg-deal"></i>Lower price</span><span><i class="lg-peak"></i>Higher price</span>' +
-                       '<span><i class="lg-booked"></i>Booked</span>';
+    legend.innerHTML = '<span class="lg-deal">Lower price</span><span class="lg-peak">Higher price</span>' +
+                       '<span class="lg-booked">Booked</span><span class="lg-note">Prices per night in ₹</span>';
     cal.appendChild(legend);
     if (!loaded) { var w = document.createElement('p'); w.className = 'cal-wait'; w.textContent = 'Loading prices…'; cal.appendChild(w); }
   }
@@ -223,10 +233,10 @@ var BOOKING_API = '/api/booking';
     if (selA && selB && s > selA && s < selB) b.classList.add('is-range');
     var num = document.createElement('span'); num.className = 'cal-n'; num.textContent = n; b.appendChild(num);
     var pr = document.createElement('span'); pr.className = 'cal-p';
-    pr.textContent = past ? '' : booked ? (checkoutOnly ? 'Check-out' : 'Booked') : (info ? short(info[0]) : '');
+    pr.textContent = past || booked ? '' : (info ? short(info[0]) : '');
     b.appendChild(pr);
     b.disabled = past || (booked && !checkoutOnly);
-    b.setAttribute('aria-label', nice(s) + (booked ? (checkoutOnly ? ', check-out only' : ', booked') : info ? ', ' + short(info[0]) + ' a night' : ''));
+    b.setAttribute('aria-label', nice(s) + (booked ? (checkoutOnly ? ', check-out only' : ', booked') : info ? ', ₹' + short(info[0]) + ' a night' : ''));
     if (!b.disabled) b.addEventListener('click', function () { tap(s); });
     return b;
   }
@@ -235,8 +245,7 @@ var BOOKING_API = '/api/booking';
       selB = s;
       ci.value = selA; co.value = selB; co.min = addDays(selA, 1);
       var mine = ++checking;
-      status.textContent = 'Checking ' + nice(selA) + ' to ' + nice(selB) + '…'; status.className = 'bd-status';
-      summary.hidden = true; nextBtn.hidden = true; drawCal();
+      say('Checking…'); bar.hidden = true; chips(); drawCal();
       check(selA, selB).then(function (r) { if (mine === checking) { showResult(r); quickCheck(); } })
         .catch(function () { if (mine === checking) showResult({ ok: false, error: 'Could not check right now. Please message us on WhatsApp.' }); });
       return;
@@ -246,21 +255,22 @@ var BOOKING_API = '/api/booking';
     showResult(null);
   }
 
-  // "Total ~~₹9,000~~ ₹7,500": the usual price struck through when the owner set a lower one
+  // Price in the bar: ~~₹12,500~~ ₹9,498 with "Save ₹3,002" under it
   function priceLine(price, regular) {
-    var li = document.createElement('li'); li.className = 'bd-price';
-    if (!price) { li.textContent = 'Price confirmed on WhatsApp'; return li; }
-    li.appendChild(document.createTextNode('Total '));
+    var box = document.createElement('div'); box.className = 'bd-price';
+    if (!price) { box.textContent = 'Price confirmed on WhatsApp'; return box; }
+    var top = document.createElement('div');
     if (regular > price) {
       var s = document.createElement('s'); s.textContent = rupees(regular); s.setAttribute('aria-label', 'usual price ' + rupees(regular));
-      li.appendChild(s); li.appendChild(document.createTextNode(' '));
+      top.appendChild(s); top.appendChild(document.createTextNode(' '));
     }
-    var b = document.createElement('strong'); b.textContent = rupees(price); li.appendChild(b);
-    if (regular > price) {
-      var off = document.createElement('span'); off.className = 'bd-save'; off.textContent = 'You save ' + rupees(regular - price);
-      li.appendChild(off);
-    }
-    return li;
+    var b = document.createElement('strong'); b.textContent = rupees(price); top.appendChild(b);
+    box.appendChild(top);
+    var sub = document.createElement('div'); sub.className = 'bd-price-sub';
+    sub.textContent = regular > price ? 'You save ' + rupees(regular - price) : 'Total';
+    if (regular > price) sub.classList.add('is-save');
+    box.appendChild(sub);
+    return box;
   }
 
   // ID upload: photos are shrunk in the browser (about 300 KB each) so they send quickly on mobile data
