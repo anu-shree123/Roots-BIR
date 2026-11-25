@@ -31,6 +31,12 @@ const CONFIG = {
   NIGHTLY_RATE: 0,            // regular price per night, e.g. 3500. 0 = don't show a price
   WEEKEND_RATE: 0,            // Friday and Saturday nights, e.g. 4500. 0 = same as regular
   ID_FOLDER_NAME: 'Roots Bir - Guest IDs', // private Google Drive folder for uploaded guest IDs
+
+  // Spam limits for website booking requests. Over a limit, the request is refused and nothing is saved.
+  LIMIT_PER_PHONE_PER_DAY: 3,
+  LIMIT_PER_NETWORK_PER_HOUR: 5,
+  LIMIT_TOTAL_PER_HOUR: 20,
+  KEEP_EMAILS_FOR_OWNER: 20,  // stop emailing guests when fewer than this many of today's emails are left
   MAX_GUESTS: 4,              // matches the website's guest dropdown
   MIN_NIGHTS: 1,
   MAX_NIGHTS: 30,
@@ -159,6 +165,10 @@ function createBooking_(d) {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(20000)) return { ok: false, error: 'Busy, please try again in a moment.' };
   try {
+    if (!withinLimits_(phone, d.clientIp)) {
+      Logger.log('Request refused by spam limits: phone ' + phone.slice(-4) + ', network ' + (d.clientIp || '-'));
+      return { ok: false, error: 'Too many requests right now. Please message us on WhatsApp instead.' };
+    }
     const clash = findClash_(checkin, checkout, getBlockedRanges_(true)); // fresh, no cache
     if (clash) return { ok: false, available: false, error: 'Sorry, those dates were just booked. Please choose other dates.' };
 
@@ -254,7 +264,9 @@ function sendEmails_(b) {
           'website straight away, and on Airbnb/Goibibo at their next calendar refresh (a few hours).'
   });
 
-  if (b.email) {
+  // Your own alert always goes first; guests are only emailed while there is quota to spare,
+  // so a flood of fake requests can't use up today's emails.
+  if (b.email && MailApp.getRemainingDailyQuota() > CONFIG.KEEP_EMAILS_FOR_OWNER) {
     send({
       to: b.email,
       name: CONFIG.PROPERTY_NAME,
@@ -786,3 +798,23 @@ const OWNER_HTML_ = `<!doctype html>
   google.script.run.withSuccessHandler(load).withFailureHandler(function (e) { toast('Could not load: ' + e.message); }).ownerData();
 </script>
 </body></html>`;
+
+
+// ====== SPAM LIMITS ==============================================
+
+/** Counts this request against the per-phone, per-network and overall limits. False = over a limit. */
+function withinLimits_(phone, ip) {
+  const cache = CacheService.getScriptCache();
+  const now = new Date();
+  const hour = Utilities.formatDate(now, CONFIG.TIMEZONE, 'yyMMddHH');
+  const day = Utilities.formatDate(now, CONFIG.TIMEZONE, 'yyMMdd');
+  const digits = String(phone || '').replace(/\D/g, '').slice(-10);
+  const net = String(ip || '').replace(/[^\w.:]/g, '').slice(0, 45);
+  const checks = [['rl_all_' + hour, CONFIG.LIMIT_TOTAL_PER_HOUR, 3600]];
+  if (digits) checks.push(['rl_ph_' + digits + '_' + day, CONFIG.LIMIT_PER_PHONE_PER_DAY, 86400]);
+  if (net) checks.push(['rl_ip_' + net + '_' + hour, CONFIG.LIMIT_PER_NETWORK_PER_HOUR, 3600]);
+  const counts = checks.map(c => Number(cache.get(c[0])) || 0);
+  if (checks.some((c, i) => counts[i] >= c[1])) return false;
+  checks.forEach((c, i) => cache.put(c[0], String(counts[i] + 1), c[2]));
+  return true;
+}
