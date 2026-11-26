@@ -83,7 +83,7 @@ var BOOKING_API = '/api/booking';
     check(ci.value, co.value)
       .then(function (r) {
         if (!r.ok) return setNote(r.error || 'Something went wrong. Please try again.', 'bad');
-        setNote(r.available ? 'Good news, those dates are free!' : 'Sorry, those dates are taken. Pick other dates on the calendar.',
+        setNote(r.available ? 'Good news, those dates are available!' : 'Sorry, those dates are booked. Pick other dates on the calendar.',
                 r.available ? 'good' : 'bad');
         openDialog(r);
       })
@@ -159,13 +159,17 @@ var BOOKING_API = '/api/booking';
       setTitle('Choose your ', 'dates');
       say(r.error || 'Something went wrong. Please try again.', 'bad');
     } else if (!r.available) {
-      setTitle('Those dates are ', 'taken');
+      setTitle('Those dates are ', 'booked');
       say(nice(ci.value) + ' to ' + nice(co.value) + ' is booked. Pick new dates below.', 'bad');
       selA = selB = null; // clear the clash so the booked dates show as booked
     } else {
-      setTitle('Your dates are ', 'free');
+      setTitle('Your dates are ', 'available');
       var n = r.nights || nights(ci.value, co.value);
-      say(n + (n > 1 ? ' nights' : ' night') + ' · ' + guests.value + (guests.value === '1' ? ' guest' : ' guests'), 'good');
+      // nights and guests as two clear pills
+      status.className = 'bd-status bd-pills'; status.textContent = '';
+      [n + (n > 1 ? ' nights' : ' night'), guests.value + (guests.value === '1' ? ' guest' : ' guests')].forEach(function (t) {
+        var pill = document.createElement('span'); pill.textContent = t; status.appendChild(pill);
+      });
       totalBox.innerHTML = '';
       totalBox.appendChild(priceLine(r.price, r.regularPrice));
       recap.textContent = fmtShort(ci.value) + ' – ' + fmtShort(co.value) + (r.price ? ' · ' + rupees(r.price) : '');
@@ -199,8 +203,7 @@ var BOOKING_API = '/api/booking';
     wrap.appendChild(month(calMonth)); wrap.appendChild(month(addMonths(calMonth, 1)));
     cal.appendChild(wrap);
     var legend = document.createElement('div'); legend.className = 'cal-legend';
-    legend.innerHTML = '<span class="lg-deal">Lower price</span><span class="lg-peak">Higher price</span>' +
-                       '<span class="lg-booked">Booked</span><span class="lg-note">Prices per night in ₹</span>';
+    legend.innerHTML = '<span class="lg-deal">Lower price</span><span class="lg-booked">Booked</span>';
     cal.appendChild(legend);
     if (!loaded) { var w = document.createElement('p'); w.className = 'cal-wait'; w.textContent = 'Loading prices…'; cal.appendChild(w); }
   }
@@ -227,13 +230,13 @@ var BOOKING_API = '/api/booking';
     var checkoutOnly = booked && canCheckout(s); // the morning a booking starts is still a fine check-out day
     if (past) b.classList.add('is-past');
     if (booked) b.classList.add(checkoutOnly ? 'is-checkout' : 'is-booked');
-    if (!past && !booked && info) { if (info[0] < info[1]) b.classList.add('is-deal'); else if (info[0] > info[1]) b.classList.add('is-peak'); }
+    if (!past && !booked && info && info[0] < info[1]) b.classList.add('is-deal'); // only lower prices are highlighted
     if (s === selA) b.classList.add('is-start');
     if (s === selB) b.classList.add('is-end');
     if (selA && selB && s > selA && s < selB) b.classList.add('is-range');
     var num = document.createElement('span'); num.className = 'cal-n'; num.textContent = n; b.appendChild(num);
     var pr = document.createElement('span'); pr.className = 'cal-p';
-    pr.textContent = past || booked ? '' : (info ? short(info[0]) : '');
+    pr.textContent = ''; // no per-date prices: the total shows in the bar below
     b.appendChild(pr);
     b.disabled = past || (booked && !checkoutOnly);
     b.setAttribute('aria-label', nice(s) + (booked ? (checkoutOnly ? ', check-out only' : ', booked') : info ? ', ₹' + short(info[0]) + ' a night' : ''));
