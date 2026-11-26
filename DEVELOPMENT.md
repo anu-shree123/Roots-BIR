@@ -6,9 +6,9 @@ straight to the live site.
 | | Dev (testing) | Live (guests) |
 |---|---|---|
 | Git branch | `dev` | `main` |
-| Website | https://roots-bir-git-dev-roots-bir.vercel.app | https://rootsbir.com |
-| Booking script | Apps Script in the **Roots Bir DEV** sheet (`ENVIRONMENT: 'dev'`) | Apps Script in the real bookings sheet (`ENVIRONMENT: 'live'`) |
-| Bookings saved to | the DEV sheet | the real sheet |
+| Website | https://roots-bir.vercel.app | https://rootsbir.com |
+| Booking script | Apps Script in the **Autologging guest data - dev** sheet (`ENVIRONMENT: 'dev'`) | Apps Script in the **Autologging guest data - prod** sheet (`ENVIRONMENT: 'live'`) |
+| Bookings saved to | the dev sheet | the real sheet |
 | Emails | only to you, marked `[DEV]` | to you and the guest |
 
 The website chooses the backend automatically (`api/_backend.js`): the live
@@ -24,7 +24,7 @@ real sheet.
 2. **Review**: look at the preview link. Merge the pull request into `dev`
    when it looks right.
 3. **Test on dev**: try the change on the dev website. Make test bookings
-   there freely. They land in the DEV sheet and only you get the emails.
+   there freely. They land in the dev sheet and only you get the emails.
 4. **Release**: open a pull request from `dev` into `main`, titled
    "Release: …" with a list of what changed. Merging it puts the change live
    on rootsbir.com within a couple of minutes.
@@ -35,11 +35,11 @@ real sheet.
 
 The script isn't deployed by GitHub, so it follows the same steps by hand:
 
-1. Paste the new `apps-script/Booking.gs` into the **DEV** sheet's script.
+1. Paste the new `apps-script/Booking.gs` into the **dev** sheet's script.
    Keep `ENVIRONMENT: 'dev'` and the links. Save, then **Deploy → Manage
    deployments → pencil → New version → Deploy**.
 2. Test on the dev website.
-3. Once it works, paste the same code into the **live** sheet's script.
+3. Once it works, paste the same code into the **prod** sheet's script.
    Keep `ENVIRONMENT: 'live'` and the live links and UPI ID. Save and deploy
    a new version the same way.
 
@@ -55,16 +55,16 @@ The script isn't deployed by GitHub, so it follows the same steps by hand:
 ## Rules
 
 - Never make test bookings on rootsbir.com. Use the dev site.
-- Never run `logAirbnb`, `logGoibibo` or `logAll` in the DEV sheet. They
+- Never run `logAirbnb`, `logGoibibo` or `logAll` in the dev sheet. They
   read the real Gmail and would label real booking emails "Logged", so the
-  live sheet would miss them. Delete those functions from the DEV copy.
+  live sheet would miss them. Delete those functions from the dev copy.
 - The two scripts differ only in `ENVIRONMENT`, the calendar links and the
   UPI ID. Everything else is the same code.
 
 ## One-time setup
 
 1. **Dev sheet**: open the real bookings sheet, choose **File → Make a copy**,
-   and name it `Roots Bir DEV`. The copy includes the scripts.
+   and name it `Autologging guest data - dev`. The copy includes the scripts.
 2. In the copy, open **Extensions → Apps Script**:
    - Delete the `logAirbnb`, `logGoibibo` and `logAll` code.
    - In the Booking file, set `ENVIRONMENT: 'dev'`.
@@ -75,8 +75,17 @@ The script isn't deployed by GitHub, so it follows the same steps by hand:
    - Optional: delete the guest rows in the copy (keep row 1) so test data
      stays separate.
 3. **Vercel**: in the `roots-bir` project, open **Settings → Environment
-   Variables** and add `BOOKING_BACKEND` with the DEV `/exec` link. Tick
+   Variables** and add `BOOKING_BACKEND` with the dev sheet's `/exec` link. Tick
    **Preview** only, not Production. Save.
-4. **GitHub (recommended)**: in the repo, open **Settings → Branches → Add
-   rule** for `main`, and tick **Require a pull request before merging**.
-   This stops anyone from pushing straight to the live site.
+4. **GitHub: lock the live branch.** In the repo, open **Settings → Rules →
+   Rulesets → New ruleset → New branch ruleset**:
+   - Name: `Protect live`. Enforcement status: **Active**.
+   - Bypass list: leave **empty**, so the rule applies to you too.
+   - Target branches: **Add target → Include default branch** (`main`).
+   - Tick **Restrict deletions**, **Block force pushes**, **Require a pull
+     request before merging**, and **Require status checks to pass**. Under
+     the last one, click **Add checks**, and add **Only dev can go live**.
+   - Click **Create**.
+
+   After this, `main` only changes through a pull request from `dev`. Any
+   other branch gets a red "Only dev can go live" check and can't be merged.

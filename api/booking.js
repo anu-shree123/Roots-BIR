@@ -8,7 +8,8 @@ function readBody(req) {
   if (req.body && typeof req.body === 'object') return Promise.resolve(JSON.stringify(req.body));
   return new Promise((resolve) => {
     let data = '';
-    req.on('data', (c) => { data += c; if (data.length > 20000) req.destroy(); });
+    // ID photos fit well under this (Vercel's own limit is 4.5 MB)
+    req.on('data', (c) => { data += c; if (data.length > 4500000) req.destroy(); });
     req.on('end', () => resolve(data));
   });
 }
@@ -23,7 +24,14 @@ module.exports = async (req, res) => {
   try {
     let r;
     if (req.method === 'POST') {
-      const body = await readBody(req);
+      let body = await readBody(req);
+      // Tell the script which network the request came from, for its spam limits
+      try {
+        const data = JSON.parse(body);
+        const ip = String(req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+        data.clientIp = ip;
+        body = JSON.stringify(data);
+      } catch (_) { /* not JSON: pass it on as it is */ }
       // Apps Script answers a POST with a 302 to the result; fetch follows it as a GET.
       r = await fetch(BACKEND, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body, redirect: 'follow' });
     } else {

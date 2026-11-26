@@ -53,7 +53,8 @@
         </label>
         <button type="submit" class="btn btn-solid">Check availability</button>
       </form>
-      <p class="avail-note" id="book" aria-live="polite">Bookings are handled securely on Airbnb.</p>
+      <p class="avail-note" id="book" aria-live="polite">Book direct with us. No platform fees.</p>
+      <button type="button" class="avail-cal-link" id="open-cal" hidden>See available dates</button>
     </div>
     <a class="scroll-cue" href="#intro" aria-label="Scroll to the story"><span></span></a>
   </section>
@@ -157,7 +158,6 @@
           <li>Wi-Fi</li><li>Full kitchen with gas stove</li><li>Dedicated workspace</li><li>Free parking</li>
           <li>Private garden</li><li>Bonfire area</li><li>Projector &amp; sound system</li><li>Mountain-view balcony</li>
         </ul>
-        <p class="ph small">[Guests mention a cook. Is that available on request? I'll add it if so.]</p>
       </div>
     </div>
   </section>
@@ -211,7 +211,7 @@
     <div class="map-stage">
       <!-- The illustrated map fills the screen -->
       <div class="map-canvas">
-        <svg viewBox="-440 -20 1440 840" data-vb-wide="-440 -20 1440 840" data-vb-narrow="190 96 720 600" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="map-t">
+        <svg viewBox="-440 -20 1440 840" data-vb-wide="-440 -20 1440 840" data-vb-narrow="160 100 780 650" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="map-t">
           <title id="map-t">Illustrated map of Bir showing Roots Bir and nearby places</title>
           <defs>
             <pattern id="tea" width="14" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
@@ -240,33 +240,48 @@
             <path d="M-500 612 C-320 600 -160 624 0 610 C180 596 300 626 460 606 C620 588 760 620 1000 600" opacity=".6"/>
           </g>
 
-          <!-- stream coming down from the hills -->
-          <path d="M640 110 C620 180 660 230 610 290 C560 350 590 400 545 450 C505 495 470 560 430 700" fill="none" stroke="#a9b8bd" stroke-width="3" stroke-linecap="round" opacity=".8"/>
 
-          <!-- tea gardens -->
-          <path d="M640 520 C700 498 790 506 850 540 C880 580 850 640 780 650 C710 660 650 630 630 590 C620 560 620 532 640 520 Z" fill="url(#tea)" stroke="#8f9c88" stroke-width="1" opacity=".9"/>
-          <path d="M120 480 C170 466 230 476 250 510 C262 540 230 570 180 566 C130 562 104 530 120 480 Z" fill="url(#tea)" stroke="#8f9c88" stroke-width="1" opacity=".7"/>
+          <!-- tea gardens, south-east of Chougan Chowk -->
+          <path d="M690 530 C730 500 820 494 890 512 C935 526 940 584 900 604 C850 626 760 624 710 606 C672 590 662 552 690 530 Z" fill="url(#tea)" stroke="#8f9c88" stroke-width="1" opacity=".9"/>
 
           <!-- landing field -->
-          <path d="M430 520 C470 506 540 510 560 536 C576 560 548 590 500 592 C454 594 418 572 430 520 Z" fill="url(#field)" stroke="#b9ae98" stroke-width="1"/>
+          <path d="M200 300 C230 282 290 284 306 304 C318 324 290 344 250 344 C214 344 190 326 200 300 Z" fill="url(#field)" stroke="#b9ae98" stroke-width="1"/>
 
-          <!-- roads -->
+          <!-- main road: Baijnath to Chauntra -->
           <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path class="road" d="M-500 700 C-300 690 -120 660 0 640 C120 620 220 560 330 470 C380 430 420 410 470 420 C540 434 580 470 640 470 C720 470 800 440 1000 430"/>
-            <path class="road" d="M470 420 C500 380 560 380 590 350 C640 300 560 280 610 240 C660 200 720 230 740 190 C756 160 760 150 770 140"/>
-            <path class="lane" d="M330 470 C340 430 360 410 382 398"/>
-            <path class="lane" d="M330 470 C300 420 270 360 252 300"/>
-            <path class="lane" d="M470 420 C480 470 492 500 498 530"/>
+            <path class="highway-edge" d="M-500 330 C-300 360 -60 380 80 420 C130 436 150 500 182 526 C200 538 212 520 240 534 C300 560 340 580 396 601 C470 630 540 676 595 676 C625 676 635 643 655 643 C675 643 680 676 700 680 C760 692 820 700 900 720 C960 734 1010 748 1060 760"/>
+            <path class="highway" d="M-500 330 C-300 360 -60 380 80 420 C130 436 150 500 182 526 C200 538 212 520 240 534 C300 560 340 580 396 601 C470 630 540 676 595 676 C625 676 635 643 655 643 C675 643 680 676 700 680 C760 692 820 700 900 720 C960 734 1010 748 1060 760"/>
           </g>
 
-          <!-- off-map pointer -->
+          <!-- roads out of Chougan Chowk -->
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <!-- down to the main road -->
+            <path class="road" d="M629 460 C590 482 540 506 505 507 C480 508 466 492 452 495 C428 502 418 560 396 601"/>
+            <!-- north-west: past Deer Park and the Tibetan Colony to the landing site -->
+            <path class="road" d="M629 460 C595 446 565 430 535 420 C480 402 430 390 389 371 C365 360 352 345 336 342 C315 338 300 336 290 326 C280 316 266 310 250 307"/>
+            <path class="road" d="M389 371 C402 364 412 356 422 350 C434 343 444 338 452 333"/>
+            <path class="road" d="M389 371 C370 372 356 376 348 384 C342 390 340 395 340 399"/>
+            <!-- north: up the hill to Billing, with the turn for Gunehar -->
+            <path class="road" d="M629 460 C618 444 610 430 614 420 C622 400 636 390 660 375 C685 360 705 352 715 345 C726 328 728 316 730 301 C735 270 740 250 745 235 C760 210 790 196 812 188 C830 178 842 166 850 155"/>
+            <path class="road" d="M715 345 C740 344 768 345 790 343 C808 341 822 332 835 329 C846 326 856 325 865 324"/>
+            <!-- our lane -->
+            <path class="lane" d="M629 460 C650 470 668 482 685 481 C705 480 722 474 730 466 C734 460 734 452 732 444"/>
+          </g>
+
+          <!-- Chougan Chowk -->
           <g class="m-off">
-            <path d="M150 620 L108 632 M108 632 L120 620 M108 632 L122 640" fill="none" stroke="#6f6a62" stroke-width="1.2" stroke-linecap="round"/>
-            <text x="130" y="664">to Baijnath &amp; Ahju station</text>
+            <circle cx="629" cy="460" r="4.5" fill="#fbfaf7" stroke="#8a826f" stroke-width="1.4"/>
+            <text x="600" y="486" text-anchor="end">Chougan Chowk</text>
+          </g>
+
+          <!-- where the main road goes -->
+          <g class="m-off">
+            <text x="200" y="566">← to Baijnath</text>
+            <text x="845" y="684" text-anchor="end">to Chauntra →</text>
           </g>
 
           <!-- compass -->
-          <g transform="translate(930 580)" class="m-compass">
+          <g transform="translate(965 440)" class="m-compass">
             <circle r="26" fill="none" stroke="#b9b2a4"/>
             <path d="M0 -20 L6 4 L0 0 L-6 4 Z" fill="#6d7b68"/>
             <text y="-32" text-anchor="middle">N</text>
@@ -274,35 +289,35 @@
 
           <!-- pins (positions match the list) -->
           <g class="pins">
-            <g class="pin pin-home" data-place="1" transform="translate(382 398)" tabindex="0" role="button" aria-label="1, Roots Bir">
+            <g class="pin pin-home" data-place="1" transform="translate(732 432)" tabindex="0" role="button" aria-label="1, Roots Bir">
               <circle r="26" class="halo"/>
               <circle r="15" class="dot"/>
               <path d="M0 -8 C4 -4 7 -1 5 3 C3 6 1 5 0 8 C-1 5 -3 6 -5 3 C-7 -1 -4 -4 0 -8 Z" fill="#fbfaf7"/>
-              <text class="m-label" x="24" y="38">Roots Bir</text>
+              <text class="m-label" x="24" y="8">Roots Bir</text>
             </g>
-            <g class="pin" data-place="2" transform="translate(452 352)" tabindex="0" role="button" aria-label="2, Deer Park Institute">
+            <g class="pin" data-place="2" transform="translate(452 333)" tabindex="0" role="button" aria-label="2, Deer Park Institute">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">2</text>
               <text class="m-label" x="18" y="-14">Deer Park</text>
             </g>
-            <g class="pin" data-place="3" transform="translate(612 466)" tabindex="0" role="button" aria-label="3, Tibetan Colony">
+            <g class="pin" data-place="3" transform="translate(340 404)" tabindex="0" role="button" aria-label="3, Tibetan Colony">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">3</text>
-              <text class="m-label" x="18" y="-14">Tibetan Colony</text>
+              <text class="m-label" x="0" y="40" text-anchor="middle">Tibetan Colony</text>
             </g>
-            <g class="pin" data-place="4" transform="translate(498 552)" tabindex="0" role="button" aria-label="4, Landing site">
+            <g class="pin" data-place="4" transform="translate(250 307)" tabindex="0" role="button" aria-label="4, Landing site">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">4</text>
-              <text class="m-label" x="18" y="30">Landing site</text>
+              <text class="m-label" x="0" y="-26" text-anchor="middle">Landing site</text>
             </g>
-            <g class="pin" data-place="5" transform="translate(746 580)" tabindex="0" role="button" aria-label="5, Tea gardens">
+            <g class="pin" data-place="5" transform="translate(800 560)" tabindex="0" role="button" aria-label="5, Tea gardens">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">5</text>
-              <text class="m-label" x="18" y="30">Tea gardens</text>
+              <text class="m-label" x="0" y="38" text-anchor="middle">Tea gardens</text>
             </g>
-            <g class="pin" data-place="6" transform="translate(252 300)" tabindex="0" role="button" aria-label="6, Gunehar village">
+            <g class="pin" data-place="6" transform="translate(865 324)" tabindex="0" role="button" aria-label="6, Gunehar village">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">6</text>
-              <text class="m-label" x="18" y="-14">Gunehar</text>
+              <text class="m-label" x="0" y="-26" text-anchor="middle">Gunehar</text>
             </g>
-            <g class="pin" data-place="7" transform="translate(770 140)" tabindex="0" role="button" aria-label="7, Billing take-off">
+            <g class="pin" data-place="7" transform="translate(850 155)" tabindex="0" role="button" aria-label="7, Billing take-off">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">7</text>
-              <text class="m-label" x="20" y="6">Billing take-off</text>
+              <text class="m-label" x="-22" y="6" text-anchor="end">Billing take-off</text>
             </g>
           </g>
         </svg>
@@ -359,11 +374,12 @@
   <section class="block snap tone-clay" id="faq" data-label-nav="FAQ">
     <div class="narrow">
       <h2 class="section-title">Good to <em>know</em></h2>
-      <details><summary>Check-in and check-out times</summary><p class="ph">[Add your times, e.g. check-in from 1 pm, check-out by 11 am.]</p></details>
-      <details><summary>Is food available?</summary><p>The kitchen is fully equipped with a gas stove. <span class="ph">[Add whether a cook or meals can be arranged.]</span></p></details>
+      <details><summary>Check-in and check-out times</summary><p>Check-in is from 1 pm and check-out is by 10 am.</p></details>
+      <details><summary>Is food available?</summary><p>The kitchen is fully equipped with a gas stove, so you can cook for yourself. We don't offer a cook or meals at the moment.</p></details>
       <details><summary>Is it good for working remotely?</summary><p>Yes. There's Wi-Fi and a dedicated workspace.</p></details>
       <details><summary>How do I get there?</summary><p>The nearest airport is Kangra (Gaggal), about two hours away. Overnight buses run from Delhi to Bir. We're happy to help with directions.</p></details>
-      <details><summary>House rules</summary><p class="ph">[Add pets, smoking, quiet hours and anything else guests should know.]</p></details>
+      <details><summary>House rules</summary><p>Pets are welcome. Smoking and alcohol are allowed. Please keep things quiet between 10 pm and 8 am.</p></details>
+      <details><summary>What if I need to cancel?</summary><p>Cancel 7 or more days before check-in for a full refund of your advance. Cancel 2 to 6 days before for a 50% refund. Cancellations less than 2 days before check-in aren't refunded.</p></details>
     </div>
   </section>
 
@@ -407,21 +423,41 @@
   <!-- Direct booking: opens after the dates are confirmed free (see booking.js) -->
   <dialog class="book-dialog" id="book-dialog" aria-labelledby="bd-title">
     <button type="button" class="bd-close" aria-label="Close">&times;</button>
-    <p class="eyebrow">Book direct</p>
-    <h2 id="bd-title">Your dates are <em>free</em></h2>
-    <ul class="bd-summary"></ul>
-    <form class="bd-form" novalidate>
+    <h2 id="bd-title">Choose your <em>dates</em></h2>
+    <!-- Step 1: read top to bottom: status, chosen dates, calendar, then price + Continue -->
+    <div class="bd-step1">
+      <p class="bd-status" aria-live="polite"></p>
+      <div class="bd-dates">
+        <div class="bd-date"><span>Check-in</span><b class="bd-ci">Add date</b></div>
+        <div class="bd-date"><span>Check-out</span><b class="bd-co">Add date</b></div>
+      </div>
+      <div class="bd-cal" aria-label="Available dates"></div>
+      <div class="bd-bar">
+        <div class="bd-total"></div>
+        <button type="button" class="btn btn-solid bd-next">Continue</button>
+      </div>
+    </div>
+    <!-- Step 2: guest details -->
+    <form class="bd-form" novalidate hidden>
+      <button type="button" class="bd-back"><span>&larr; Change</span> <strong class="bd-recap"></strong></button>
       <label><span>Full name</span><input name="name" autocomplete="name" required maxlength="80"></label>
       <label><span>Phone / WhatsApp</span><input name="phone" type="tel" autocomplete="tel" required placeholder="+91" maxlength="20"></label>
       <label><span>Email (optional)</span><input name="email" type="email" autocomplete="email" maxlength="120"></label>
       <label><span>Anything we should know? (optional)</span><textarea name="message" rows="2" maxlength="500"></textarea></label>
+      <label class="bd-file"><span>ID proof (optional)</span><input name="idfile" type="file" accept="image/*,application/pdf" multiple>
+        <small>Aadhaar, passport or driving licence. Up to 2 photos or a PDF (front and back). Only we can see it. You can also show it at check-in.</small></label>
       <label class="bd-hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
       <button type="submit" class="btn btn-solid">Request to book</button>
-      <p class="bd-fine">No payment now. We confirm your dates on WhatsApp, and your booking is final once the advance is paid by UPI.</p>
+      <p class="bd-fine">No payment now. We confirm your dates on WhatsApp, and your booking is final once the advance is paid by UPI. Cancel 7+ days before check-in for a full refund, or 2 to 6 days before for 50%.</p>
     </form>
     <div class="bd-msg" aria-live="polite"></div>
   </dialog>
 
+  <!-- Floating chat: opens WhatsApp, no login needed -->
+  <a class="chat-fab" href="https://wa.me/919311710013?text=Hi%2C%20I%20have%20a%20question%20about%20staying%20at%20Roots%20Bir." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2a9.7 9.7 0 0 0-8.4 14.6L2.3 21.7l5-1.3A9.7 9.7 0 1 0 12 2.2Zm0 17.7a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 19.9Zm4.4-6c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1 4.9 4.9 0 0 0 1 2.6 11.2 11.2 0 0 0 4.3 3.8c1.6.7 2.2.7 3 .6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.4Z"/></svg>
+    <span>Chat with us</span>
+  </a>
   <script src="main.js"></script>
   <script src="booking.js"></script>
 </body>
