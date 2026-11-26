@@ -73,3 +73,5 @@
 .map-section .places .t { font-size: 18px; }
 .map-section .panel-foot .link { margin-top: 12px; }
 @media (max-width: 900px) { .map-section .panel-front { max-height: none; } }
+.highway-edge { stroke: #c4b9a6; stroke-width: 10; }
+.highway { stroke: #e4ddd0; stroke-width: 6.5; }

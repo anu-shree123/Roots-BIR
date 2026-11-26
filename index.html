@@ -211,7 +211,7 @@
     <div class="map-stage">
       <!-- The illustrated map fills the screen -->
       <div class="map-canvas">
-        <svg viewBox="-440 -20 1440 840" data-vb-wide="-440 -20 1440 840" data-vb-narrow="190 96 720 600" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="map-t">
+        <svg viewBox="-440 -20 1440 840" data-vb-wide="-440 -20 1440 840" data-vb-narrow="160 100 780 650" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="map-t">
           <title id="map-t">Illustrated map of Bir showing Roots Bir and nearby places</title>
           <defs>
             <pattern id="tea" width="14" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
@@ -240,33 +240,48 @@
             <path d="M-500 612 C-320 600 -160 624 0 610 C180 596 300 626 460 606 C620 588 760 620 1000 600" opacity=".6"/>
           </g>
 
-          <!-- stream coming down from the hills -->
-          <path d="M640 110 C620 180 660 230 610 290 C560 350 590 400 545 450 C505 495 470 560 430 700" fill="none" stroke="#a9b8bd" stroke-width="3" stroke-linecap="round" opacity=".8"/>
 
-          <!-- tea gardens -->
-          <path d="M640 520 C700 498 790 506 850 540 C880 580 850 640 780 650 C710 660 650 630 630 590 C620 560 620 532 640 520 Z" fill="url(#tea)" stroke="#8f9c88" stroke-width="1" opacity=".9"/>
-          <path d="M120 480 C170 466 230 476 250 510 C262 540 230 570 180 566 C130 562 104 530 120 480 Z" fill="url(#tea)" stroke="#8f9c88" stroke-width="1" opacity=".7"/>
+          <!-- tea gardens, south-east of Chougan Chowk -->
+          <path d="M690 530 C730 500 820 494 890 512 C935 526 940 584 900 604 C850 626 760 624 710 606 C672 590 662 552 690 530 Z" fill="url(#tea)" stroke="#8f9c88" stroke-width="1" opacity=".9"/>
 
           <!-- landing field -->
-          <path d="M430 520 C470 506 540 510 560 536 C576 560 548 590 500 592 C454 594 418 572 430 520 Z" fill="url(#field)" stroke="#b9ae98" stroke-width="1"/>
+          <path d="M200 300 C230 282 290 284 306 304 C318 324 290 344 250 344 C214 344 190 326 200 300 Z" fill="url(#field)" stroke="#b9ae98" stroke-width="1"/>
 
-          <!-- roads -->
+          <!-- main road: Baijnath to Chauntra -->
           <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path class="road" d="M-500 700 C-300 690 -120 660 0 640 C120 620 220 560 330 470 C380 430 420 410 470 420 C540 434 580 470 640 470 C720 470 800 440 1000 430"/>
-            <path class="road" d="M470 420 C500 380 560 380 590 350 C640 300 560 280 610 240 C660 200 720 230 740 190 C756 160 760 150 770 140"/>
-            <path class="lane" d="M330 470 C340 430 360 410 382 398"/>
-            <path class="lane" d="M330 470 C300 420 270 360 252 300"/>
-            <path class="lane" d="M470 420 C480 470 492 500 498 530"/>
+            <path class="highway-edge" d="M-500 330 C-300 360 -60 380 80 420 C130 436 150 500 182 526 C200 538 212 520 240 534 C300 560 340 580 396 601 C470 630 540 676 595 676 C625 676 635 643 655 643 C675 643 680 676 700 680 C760 692 820 700 900 720 C960 734 1010 748 1060 760"/>
+            <path class="highway" d="M-500 330 C-300 360 -60 380 80 420 C130 436 150 500 182 526 C200 538 212 520 240 534 C300 560 340 580 396 601 C470 630 540 676 595 676 C625 676 635 643 655 643 C675 643 680 676 700 680 C760 692 820 700 900 720 C960 734 1010 748 1060 760"/>
           </g>
 
-          <!-- off-map pointer -->
+          <!-- roads out of Chougan Chowk -->
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <!-- down to the main road -->
+            <path class="road" d="M629 460 C590 482 540 506 505 507 C480 508 466 492 452 495 C428 502 418 560 396 601"/>
+            <!-- north-west: past Deer Park and the Tibetan Colony to the landing site -->
+            <path class="road" d="M629 460 C595 446 565 430 535 420 C480 402 430 390 389 371 C365 360 352 345 336 342 C315 338 300 336 290 326 C280 316 266 310 250 307"/>
+            <path class="road" d="M389 371 C402 364 412 356 422 350 C434 343 444 338 452 333"/>
+            <path class="road" d="M389 371 C370 372 356 376 348 384 C342 390 340 395 340 399"/>
+            <!-- north: up the hill to Billing, with the turn for Gunehar -->
+            <path class="road" d="M629 460 C618 444 610 430 614 420 C622 400 636 390 660 375 C685 360 705 352 715 345 C726 328 728 316 730 301 C735 270 740 250 745 235 C760 210 790 196 812 188 C830 178 842 166 850 155"/>
+            <path class="road" d="M715 345 C740 344 768 345 790 343 C808 341 822 332 835 329 C846 326 856 325 865 324"/>
+            <!-- our lane -->
+            <path class="lane" d="M629 460 C650 470 668 482 685 481 C705 480 722 474 730 466 C734 460 734 452 732 444"/>
+          </g>
+
+          <!-- Chougan Chowk -->
           <g class="m-off">
-            <path d="M150 620 L108 632 M108 632 L120 620 M108 632 L122 640" fill="none" stroke="#6f6a62" stroke-width="1.2" stroke-linecap="round"/>
-            <text x="130" y="664">to Baijnath &amp; Ahju station</text>
+            <circle cx="629" cy="460" r="4.5" fill="#fbfaf7" stroke="#8a826f" stroke-width="1.4"/>
+            <text x="600" y="486" text-anchor="end">Chougan Chowk</text>
+          </g>
+
+          <!-- where the main road goes -->
+          <g class="m-off">
+            <text x="200" y="566">← to Baijnath</text>
+            <text x="845" y="684" text-anchor="end">to Chauntra →</text>
           </g>
 
           <!-- compass -->
-          <g transform="translate(930 580)" class="m-compass">
+          <g transform="translate(965 440)" class="m-compass">
             <circle r="26" fill="none" stroke="#b9b2a4"/>
             <path d="M0 -20 L6 4 L0 0 L-6 4 Z" fill="#6d7b68"/>
             <text y="-32" text-anchor="middle">N</text>
@@ -274,35 +289,35 @@
 
           <!-- pins (positions match the list) -->
           <g class="pins">
-            <g class="pin pin-home" data-place="1" transform="translate(382 398)" tabindex="0" role="button" aria-label="1, Roots Bir">
+            <g class="pin pin-home" data-place="1" transform="translate(732 432)" tabindex="0" role="button" aria-label="1, Roots Bir">
               <circle r="26" class="halo"/>
               <circle r="15" class="dot"/>
               <path d="M0 -8 C4 -4 7 -1 5 3 C3 6 1 5 0 8 C-1 5 -3 6 -5 3 C-7 -1 -4 -4 0 -8 Z" fill="#fbfaf7"/>
-              <text class="m-label" x="24" y="38">Roots Bir</text>
+              <text class="m-label" x="24" y="8">Roots Bir</text>
             </g>
-            <g class="pin" data-place="2" transform="translate(452 352)" tabindex="0" role="button" aria-label="2, Deer Park Institute">
+            <g class="pin" data-place="2" transform="translate(452 333)" tabindex="0" role="button" aria-label="2, Deer Park Institute">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">2</text>
               <text class="m-label" x="18" y="-14">Deer Park</text>
             </g>
-            <g class="pin" data-place="3" transform="translate(612 466)" tabindex="0" role="button" aria-label="3, Tibetan Colony">
+            <g class="pin" data-place="3" transform="translate(340 404)" tabindex="0" role="button" aria-label="3, Tibetan Colony">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">3</text>
-              <text class="m-label" x="18" y="-14">Tibetan Colony</text>
+              <text class="m-label" x="0" y="40" text-anchor="middle">Tibetan Colony</text>
             </g>
-            <g class="pin" data-place="4" transform="translate(498 552)" tabindex="0" role="button" aria-label="4, Landing site">
+            <g class="pin" data-place="4" transform="translate(250 307)" tabindex="0" role="button" aria-label="4, Landing site">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">4</text>
-              <text class="m-label" x="18" y="30">Landing site</text>
+              <text class="m-label" x="0" y="-26" text-anchor="middle">Landing site</text>
             </g>
-            <g class="pin" data-place="5" transform="translate(746 580)" tabindex="0" role="button" aria-label="5, Tea gardens">
+            <g class="pin" data-place="5" transform="translate(800 560)" tabindex="0" role="button" aria-label="5, Tea gardens">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">5</text>
-              <text class="m-label" x="18" y="30">Tea gardens</text>
+              <text class="m-label" x="0" y="38" text-anchor="middle">Tea gardens</text>
             </g>
-            <g class="pin" data-place="6" transform="translate(252 300)" tabindex="0" role="button" aria-label="6, Gunehar village">
+            <g class="pin" data-place="6" transform="translate(865 324)" tabindex="0" role="button" aria-label="6, Gunehar village">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">6</text>
-              <text class="m-label" x="18" y="-14">Gunehar</text>
+              <text class="m-label" x="0" y="-26" text-anchor="middle">Gunehar</text>
             </g>
-            <g class="pin" data-place="7" transform="translate(770 140)" tabindex="0" role="button" aria-label="7, Billing take-off">
+            <g class="pin" data-place="7" transform="translate(850 155)" tabindex="0" role="button" aria-label="7, Billing take-off">
               <circle r="20" class="halo"/><circle r="11" class="dot"/><text class="num" y="4">7</text>
-              <text class="m-label" x="20" y="6">Billing take-off</text>
+              <text class="m-label" x="-22" y="6" text-anchor="end">Billing take-off</text>
             </g>
           </g>
         </svg>
