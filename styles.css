@@ -533,3 +533,21 @@ html { scroll-padding-top: 64px; }
 .bd-msg.is-good .btn.bd-wa { width: 100%; text-align: center; background: transparent; color: var(--ink); }
 .bd-msg.is-good .btn.bd-wa:hover { background: var(--bg-soft); }
 @media (max-width: 600px) { .bd-qr { display: none; } }
+
+/* Floating chat button: opens WhatsApp */
+.chat-fab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 48;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 16px 11px 13px; border-radius: 999px;
+  background: #25d366; color: #fff; text-decoration: none;
+  font: 500 15px/1 var(--sans); box-shadow: 0 8px 24px rgba(47,44,40,.22);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.chat-fab svg { width: 22px; height: 22px; fill: currentColor; flex: none; }
+.chat-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(47,44,40,.26); }
+.chat-fab:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (max-width: 600px) {
+  /* sit above the mobile "Book" bar, icon only */
+  .chat-fab { right: 16px; bottom: 80px; padding: 13px; }
+  .chat-fab span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+}
