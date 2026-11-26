@@ -1,0 +1,25 @@
+# Live-site guard: only the dev branch may be merged into main.
+# Make "Only dev can go live" a required check on main (see DEVELOPMENT.md).
+name: Only dev can go live
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, edited]
+permissions: {}
+jobs:
+  only-dev-to-main:
+    name: Only dev can go live
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the source branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          if [ "$HEAD_REF" = "dev" ] && [ "$HEAD_REPO" = "$BASE_REPO" ]; then
+            echo "OK: release from dev."
+          else
+            echo "::error::Only the dev branch can be merged into main. Open this pull request into dev instead, test it on the dev site, then release dev to main."
+            exit 1
+          fi
