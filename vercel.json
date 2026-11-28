@@ -2,5 +2,23 @@
   "rewrites": [
     { "source": "/calendar/goibibo.ics", "destination": "/api/calendar?for=goibibo" },
     { "source": "/calendar/airbnb.ics", "destination": "/api/calendar?for=airbnb" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "missing": [
+        { "type": "host", "value": "rootsbir.com" },
+        { "type": "host", "value": "www.rootsbir.com" }
+      ],
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    },
+    {
+      "source": "/calendar/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    }
   ]
 }
